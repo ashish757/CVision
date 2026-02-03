@@ -13,7 +13,7 @@ export class AuthDto {
 }
 
 export class SendOtpDto {
-  @IsString() name: string; // e.g., 'register', 'reset-password'
+  @IsString() name: string;
   @IsEmail() email: string;
 }
 
