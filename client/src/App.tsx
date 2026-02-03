@@ -1,13 +1,59 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Landing, SignIn, Dashboard, NotFound } from "./pages";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Landing, SignIn, SignUp, Dashboard, NotFound } from "./pages";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useRefreshToken } from "./hooks/useRefreshToken.ts";
+import type { RootState } from "./redux/store";
+import type {ReactNode} from "react";
+
+/**
+ * Wrapper component for auth pages (sign in/sign up)
+ * Redirects to dashboard if user is already authenticated
+ */
+const AuthRoute = ({ children }: { children: ReactNode }) => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 function App() {
+  // Initialize authentication on app load
+  useRefreshToken();
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/signin"
+          element={
+            <AuthRoute>
+              <SignIn />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <AuthRoute>
+              <SignUp />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

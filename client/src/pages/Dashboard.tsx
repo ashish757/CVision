@@ -1,6 +1,24 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useLogoutMutation } from "../redux/auth/authApi";
+import type { RootState } from "../redux/store";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [logout, { isLoading: isLoggingOut }] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+      navigate("/signin");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Still navigate to signin even if logout fails
+      navigate("/signin");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-900">
       {/* Sidebar */}
@@ -98,9 +116,10 @@ const Dashboard = () => {
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
-          <Link
-            to="/"
-            className="flex items-center space-x-3 px-4 py-3 text-gray-400 hover:bg-slate-700 rounded-lg transition-colors"
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="w-full flex items-center space-x-3 px-4 py-3 text-gray-400 hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
           >
             <svg
               className="w-5 h-5"
@@ -115,8 +134,8 @@ const Dashboard = () => {
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
               />
             </svg>
-            <span>Sign Out</span>
-          </Link>
+            <span>{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
+          </button>
         </div>
       </aside>
 
@@ -127,7 +146,7 @@ const Dashboard = () => {
           <div>
             <h1 className="text-3xl font-bold text-white">Dashboard</h1>
             <p className="text-gray-400 mt-1">
-              Welcome back! Here's your CV analysis overview.
+              Welcome back, {user?.name || "User"}! Here's your CV analysis overview.
             </p>
           </div>
           <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2">
