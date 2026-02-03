@@ -1,11 +1,89 @@
 @import "tailwindcss";
 
+@theme {
+  /* --- BRAND COLORS --- */
+  --color-primary: rgb(var(--primary));
+  --color-secondary: rgb(var(--secondary));
+  --color-accent: rgb(var(--accent));
+  
+  /* --- SEMANTIC COLORS (Added Missing) --- */
+  --color-success: rgb(var(--success));
+  --color-error: rgb(var(--error));
+  --color-warning: rgb(var(--warning));
+  --color-info: rgb(var(--info));
+  --color-destructive: rgb(var(--destructive));
+
+  /* --- UI ROLE COLORS --- */
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-card: rgb(var(--card));
+  --color-border: rgb(var(--border));
+  --color-muted: rgb(var(--muted));
+  --color-text: rgb(var(--text));
+  
+  /* --- SHADOWS & RADIUS --- */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --radius-default: var(--radius);
+  
+  /* --- TRANSITIONS --- */
+  --animate-theme: background-color var(--transition), color var(--transition);
+}
+
+:root {
+  /* Use RGB values without the rgb() wrapper for flexibility */
+  --primary: 124 58 237;
+  --secondary: 139 92 246;
+  --accent: 168 85 247;
+
+  --success: 34 197 94;
+  --error: 239 68 68;
+  --warning: 245 158 11;
+  --info: 59 130 246;
+  --destructive: 239 68 68;
+
+  --background: 255 255 255;
+  --foreground: 15 23 42;
+  --card: 255 255 255;
+  --border: 226 232 240;
+  --muted: 100 116 139;
+  --text: 15 23 42;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  --radius: 0.5rem;
+  --transition: 0.2s ease-in-out;
+}
+
+body.theme-dark {
+  --primary: 139 92 246;
+  --secondary: 124 58 237;
+  --accent: 196 181 253;
+
+  --success: 34 197 94;
+  --error: 248 113 113;
+  --warning: 251 191 36;
+  --info: 96 165 250;
+  --destructive: 248 113 113;
+
+  --background: 2 6 23;
+  --foreground: 248 250 252;
+  --card: 15 23 42;
+  --border: 51 65 85;
+  --muted: 30 41 59;
+  --text: 248 250 252;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* Base body styles using our variables */
 body {
-  margin: 0;
-  min-height: 100vh;
+  background-color: rgb(var(--background));
+  color: rgb(var(--text));
+  transition: background-color var(--transition), color var(--transition);
 }
-
-#root {
-  min-height: 100vh;
-}
-
