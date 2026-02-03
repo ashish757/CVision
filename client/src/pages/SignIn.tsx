@@ -1,22 +1,41 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../redux/auth/authApi";
 import Logo from "../components/Logo.tsx";
+import type { ApiError } from "../utils/Types";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // RTK Query mutation
+  const [login, { isLoading }] = useLoginMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setError("");
 
-    // Simulate sign in - replace with actual auth logic
-    setTimeout(() => {
-      setIsLoading(false);
+    // Validation
+    if (!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    try {
+      await login({ email, password }).unwrap();
+      // Login successful, navigate to dashboard
       navigate("/dashboard");
-    }, 1000);
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError?.data?.message || "Invalid email or password");
+    }
   };
 
   return (
@@ -37,6 +56,13 @@ const SignIn = () => {
           <p className="text-gray-400 text-center mb-8">
             Sign in to continue to CVision
           </p>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
+              <p className="text-red-400 text-sm text-center">{error}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -161,12 +187,12 @@ const SignIn = () => {
 
           <p className="mt-8 text-center text-gray-400 text-sm">
             Don't have an account?{" "}
-            <a
-              href="#"
+            <Link
+              to="/signup"
               className="text-purple-400 hover:text-purple-300 transition-colors"
             >
               Sign up for free
-            </a>
+            </Link>
           </p>
         </div>
       </div>
