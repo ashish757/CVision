@@ -3,6 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRegisterMutation, useRequestOtpMutation } from "../redux/auth/authApi";
 import Logo from "../components/Logo";
 import type { ApiError } from "../utils/Types";
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+  validatePasswordMatch,
+  validateOTP,
+  getPasswordStrengthColor,
+  getPasswordStrengthBgColor,
+  getPasswordStrengthWidth,
+} from "../utils/validation";
 
 const SignUp = () => {
   // Form state
@@ -13,6 +23,14 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState<"weak" | "medium" | "strong">("weak");
+  const [fieldErrors, setFieldErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    otp: "",
+  });
 
   const navigate = useNavigate();
 
@@ -20,28 +38,84 @@ const SignUp = () => {
   const [requestOtp, { isLoading: isRequestingOtp }] = useRequestOtpMutation();
   const [register, { isLoading: isRegistering }] = useRegisterMutation();
 
+  // Field validation handlers
+  const handleNameBlur = () => {
+    const result = validateName(name);
+    setFieldErrors((prev) => ({
+      ...prev,
+      name: result.error || "",
+    }));
+  };
+
+  const handleEmailBlur = () => {
+    const result = validateEmail(email);
+    setFieldErrors((prev) => ({
+      ...prev,
+      email: result.error || "",
+    }));
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    const result = validatePassword(value);
+    setPasswordStrength(result.strength);
+
+    // Clear error on change
+    if (fieldErrors.password) {
+      setFieldErrors((prev) => ({ ...prev, password: "" }));
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    const result = validatePassword(password);
+    setFieldErrors((prev) => ({
+      ...prev,
+      password: result.errors[0] || "",
+    }));
+  };
+
+  const handleConfirmPasswordBlur = () => {
+    const result = validatePasswordMatch(password, confirmPassword);
+    setFieldErrors((prev) => ({
+      ...prev,
+      confirmPassword: result.error || "",
+    }));
+  };
+
+  const handleOtpBlur = () => {
+    const result = validateOTP(otp);
+    setFieldErrors((prev) => ({
+      ...prev,
+      otp: result.error || "",
+    }));
+  };
+
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({ name: "", email: "", password: "", confirmPassword: "", otp: "" });
 
-    // Validation
-    if (!name || !email || !password) {
-      setError("All fields are required");
-      return;
-    }
+    // Validate all fields
+    const nameValidation = validateName(name);
+    const emailValidation = validateEmail(email);
+    const passwordValidation = validatePassword(password);
+    const passwordMatchValidation = validatePasswordMatch(password, confirmPassword);
 
-    if (name.length < 3) {
-      setError("Name must be at least 3 characters");
-      return;
-    }
+    // Check for validation errors
+    const hasErrors =
+      !nameValidation.isValid ||
+      !emailValidation.isValid ||
+      !passwordValidation.isValid ||
+      !passwordMatchValidation.isValid;
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (hasErrors) {
+      setFieldErrors({
+        name: nameValidation.error || "",
+        email: emailValidation.error || "",
+        password: passwordValidation.errors[0] || "",
+        confirmPassword: passwordMatchValidation.error || "",
+        otp: "",
+      });
       return;
     }
 
@@ -57,9 +131,12 @@ const SignUp = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setFieldErrors((prev) => ({ ...prev, otp: "" }));
 
-    if (!otp || otp.length !== 6) {
-      setError("Please enter a valid 6-digit OTP");
+    // Validate OTP
+    const otpValidation = validateOTP(otp);
+    if (!otpValidation.isValid) {
+      setFieldErrors((prev) => ({ ...prev, otp: otpValidation.error || "" }));
       return;
     }
 
@@ -85,6 +162,17 @@ const SignUp = () => {
     setStep("info");
     setOtp("");
     setError("");
+    setFieldErrors({ name: "", email: "", password: "", confirmPassword: "", otp: "" });
+  };
+
+  const handleResendOtp = async () => {
+    setError("");
+    try {
+      await requestOtp({ name, email }).unwrap();
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError?.data?.message || "Failed to resend OTP. Please try again.");
+    }
   };
 
   return (
@@ -129,12 +217,24 @@ const SignUp = () => {
                   type="text"
                   id="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (fieldErrors.name) {
+                      setFieldErrors((prev) => ({ ...prev, name: "" }));
+                    }
+                  }}
+                  onBlur={handleNameBlur}
+                  className={`w-full px-4 py-3 bg-white/5 border ${
+                    fieldErrors.name ? "border-red-500" : "border-white/10"
+                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
+                    fieldErrors.name ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  } focus:border-transparent transition-all`}
                   placeholder="John Doe"
                   required
-                  minLength={3}
                 />
+                {fieldErrors.name && (
+                  <p className="mt-2 text-sm text-red-400">{fieldErrors.name}</p>
+                )}
               </div>
 
               <div>
@@ -148,11 +248,24 @@ const SignUp = () => {
                   type="email"
                   id="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (fieldErrors.email) {
+                      setFieldErrors((prev) => ({ ...prev, email: "" }));
+                    }
+                  }}
+                  onBlur={handleEmailBlur}
+                  className={`w-full px-4 py-3 bg-white/5 border ${
+                    fieldErrors.email ? "border-red-500" : "border-white/10"
+                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
+                    fieldErrors.email ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  } focus:border-transparent transition-all`}
                   placeholder="you@example.com"
                   required
                 />
+                {fieldErrors.email && (
+                  <p className="mt-2 text-sm text-red-400">{fieldErrors.email}</p>
+                )}
               </div>
 
               <div>
@@ -166,12 +279,37 @@ const SignUp = () => {
                   type="password"
                   id="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  onChange={(e) => handlePasswordChange(e.target.value)}
+                  onBlur={handlePasswordBlur}
+                  className={`w-full px-4 py-3 bg-white/5 border ${
+                    fieldErrors.password ? "border-red-500" : "border-white/10"
+                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
+                    fieldErrors.password ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  } focus:border-transparent transition-all`}
                   placeholder="••••••••"
                   required
-                  minLength={6}
                 />
+                {/* Password Strength Indicator */}
+                {password && !fieldErrors.password && (
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-400">Password strength:</span>
+                      <span className={`text-xs font-medium ${getPasswordStrengthColor(passwordStrength)}`}>
+                        {passwordStrength.charAt(0).toUpperCase() + passwordStrength.slice(1)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-white/10 rounded-full h-1.5">
+                      <div
+                        className={`h-1.5 rounded-full transition-all duration-300 ${getPasswordStrengthBgColor(
+                          passwordStrength
+                        )} ${getPasswordStrengthWidth(passwordStrength)}`}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+                {fieldErrors.password && (
+                  <p className="mt-2 text-sm text-red-400">{fieldErrors.password}</p>
+                )}
               </div>
 
               <div>
@@ -185,12 +323,24 @@ const SignUp = () => {
                   type="password"
                   id="confirmPassword"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    if (fieldErrors.confirmPassword) {
+                      setFieldErrors((prev) => ({ ...prev, confirmPassword: "" }));
+                    }
+                  }}
+                  onBlur={handleConfirmPasswordBlur}
+                  className={`w-full px-4 py-3 bg-white/5 border ${
+                    fieldErrors.confirmPassword ? "border-red-500" : "border-white/10"
+                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
+                    fieldErrors.confirmPassword ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  } focus:border-transparent transition-all`}
                   placeholder="••••••••"
                   required
-                  minLength={6}
                 />
+                {fieldErrors.confirmPassword && (
+                  <p className="mt-2 text-sm text-red-400">{fieldErrors.confirmPassword}</p>
+                )}
               </div>
 
               <button
@@ -240,17 +390,31 @@ const SignUp = () => {
                   type="text"
                   id="otp"
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-center text-2xl tracking-widest"
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setOtp(value);
+                    if (fieldErrors.otp) {
+                      setFieldErrors((prev) => ({ ...prev, otp: "" }));
+                    }
+                  }}
+                  onBlur={handleOtpBlur}
+                  className={`w-full px-4 py-3 bg-white/5 border ${
+                    fieldErrors.otp ? "border-red-500" : "border-white/10"
+                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
+                    fieldErrors.otp ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  } focus:border-transparent transition-all text-center text-2xl tracking-widest`}
                   placeholder="000000"
                   required
                   maxLength={6}
                 />
+                {fieldErrors.otp && (
+                  <p className="mt-2 text-sm text-red-400 text-center">{fieldErrors.otp}</p>
+                )}
                 <p className="mt-2 text-sm text-gray-400 text-center">
                   Didn't receive the code?{" "}
                   <button
                     type="button"
-                    onClick={handleSendOtp}
+                    onClick={handleResendOtp}
                     disabled={isRequestingOtp}
                     className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50"
                   >

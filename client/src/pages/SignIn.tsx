@@ -3,28 +3,54 @@ import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../redux/auth/authApi";
 import Logo from "../components/Logo.tsx";
 import type { ApiError } from "../utils/Types";
+import { validateEmail, validatePassword } from "../utils/validation";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({
+    email: "",
+    password: "",
+  });
   const navigate = useNavigate();
 
   // RTK Query mutation
   const [login, { isLoading }] = useLoginMutation();
 
+  // Validate email field on blur
+  const handleEmailBlur = () => {
+    const result = validateEmail(email);
+    setFieldErrors((prev) => ({
+      ...prev,
+      email: result.error || "",
+    }));
+  };
+
+  // Validate password field on blur
+  const handlePasswordBlur = () => {
+    const result = validatePassword(password);
+    setFieldErrors((prev) => ({
+      ...prev,
+      password: result.errors[0] || "",
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({ email: "", password: "" });
 
-    // Validation
-    if (!email || !password) {
-      setError("Email and password are required");
-      return;
-    }
+    // Validate all fields
+    const emailValidation = validateEmail(email);
+    const passwordValidation = validatePassword(password);
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    // Check for validation errors
+    if (!emailValidation.isValid || !passwordValidation.isValid) {
+      setFieldErrors({
+        email: emailValidation.error || "",
+        password: passwordValidation.errors[0] || "",
+      });
       return;
     }
 
@@ -76,11 +102,25 @@ const SignIn = () => {
                 type="email"
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  // Clear field error on change
+                  if (fieldErrors.email) {
+                    setFieldErrors((prev) => ({ ...prev, email: "" }));
+                  }
+                }}
+                onBlur={handleEmailBlur}
+                className={`w-full px-4 py-3 bg-white/5 border ${
+                  fieldErrors.email ? "border-red-500" : "border-white/10"
+                } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
+                  fieldErrors.email ? "focus:ring-red-500" : "focus:ring-purple-500"
+                } focus:border-transparent transition-all`}
                 placeholder="you@example.com"
                 required
               />
+              {fieldErrors.email && (
+                <p className="mt-2 text-sm text-red-400">{fieldErrors.email}</p>
+              )}
             </div>
 
             <div>
@@ -94,11 +134,25 @@ const SignIn = () => {
                 type="password"
                 id="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  // Clear field error on change
+                  if (fieldErrors.password) {
+                    setFieldErrors((prev) => ({ ...prev, password: "" }));
+                  }
+                }}
+                onBlur={handlePasswordBlur}
+                className={`w-full px-4 py-3 bg-white/5 border ${
+                  fieldErrors.password ? "border-red-500" : "border-white/10"
+                } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
+                  fieldErrors.password ? "focus:ring-red-500" : "focus:ring-purple-500"
+                } focus:border-transparent transition-all`}
                 placeholder="••••••••"
                 required
               />
+              {fieldErrors.password && (
+                <p className="mt-2 text-sm text-red-400">{fieldErrors.password}</p>
+              )}
             </div>
 
             <div className="flex items-center justify-end">
