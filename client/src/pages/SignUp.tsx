@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Loader2, Chrome, Github } from "lucide-react";
 import { useRegisterMutation, useRequestOtpMutation } from "../redux/auth/authApi";
 import Logo from "../components/Logo";
 import type { ApiError } from "../utils/Types";
@@ -176,7 +177,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/10 to-background flex items-center justify-center px-6">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -186,11 +187,11 @@ const SignUp = () => {
         </div>
 
         {/* Sign Up Card */}
-        <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-          <h2 className="text-2xl font-bold text-white text-center mb-2">
+        <div className="bg-card/90 backdrop-blur-lg rounded-2xl p-8 border border-primary/20 shadow-2xl shadow-primary/5">
+          <h2 className="text-2xl font-bold text-text text-center mb-2">
             {step === "info" ? "Create Account" : "Verify Your Email"}
           </h2>
-          <p className="text-gray-400 text-center mb-8">
+          <p className="text-muted text-center mb-8">
             {step === "info"
               ? "Sign up to get started with CVision"
               : `Enter the OTP sent to ${email}`}
@@ -198,8 +199,8 @@ const SignUp = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
-              <p className="text-red-400 text-sm text-center">{error}</p>
+            <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-lg">
+              <p className="text-error text-sm text-center">{error}</p>
             </div>
           )}
 
@@ -209,7 +210,7 @@ const SignUp = () => {
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-muted mb-2"
                 >
                   Full Name
                 </label>
@@ -224,23 +225,23 @@ const SignUp = () => {
                     }
                   }}
                   onBlur={handleNameBlur}
-                  className={`w-full px-4 py-3 bg-white/5 border ${
-                    fieldErrors.name ? "border-red-500" : "border-white/10"
-                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
-                    fieldErrors.name ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  className={`w-full px-4 py-3 bg-card/20 border ${
+                    fieldErrors.name ? "border-error" : "border-border"
+                  } rounded-lg text-text placeholder-muted focus:outline-none focus:ring-2 ${
+                    fieldErrors.name ? "focus:ring-error" : "focus:ring-primary"
                   } focus:border-transparent transition-all`}
                   placeholder="John Doe"
                   required
                 />
                 {fieldErrors.name && (
-                  <p className="mt-2 text-sm text-red-400">{fieldErrors.name}</p>
+                  <p className="mt-2 text-sm text-error">{fieldErrors.name}</p>
                 )}
               </div>
 
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-muted mb-2"
                 >
                   Email Address
                 </label>
@@ -255,23 +256,23 @@ const SignUp = () => {
                     }
                   }}
                   onBlur={handleEmailBlur}
-                  className={`w-full px-4 py-3 bg-white/5 border ${
-                    fieldErrors.email ? "border-red-500" : "border-white/10"
-                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
-                    fieldErrors.email ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  className={`w-full px-4 py-3 bg-card/20 border ${
+                    fieldErrors.email ? "border-error" : "border-border"
+                  } rounded-lg text-text placeholder-muted focus:outline-none focus:ring-2 ${
+                    fieldErrors.email ? "focus:ring-error" : "focus:ring-primary"
                   } focus:border-transparent transition-all`}
                   placeholder="you@example.com"
                   required
                 />
                 {fieldErrors.email && (
-                  <p className="mt-2 text-sm text-red-400">{fieldErrors.email}</p>
+                  <p className="mt-2 text-sm text-error">{fieldErrors.email}</p>
                 )}
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-muted mb-2"
                 >
                   Password
                 </label>
@@ -281,10 +282,10 @@ const SignUp = () => {
                   value={password}
                   onChange={(e) => handlePasswordChange(e.target.value)}
                   onBlur={handlePasswordBlur}
-                  className={`w-full px-4 py-3 bg-white/5 border ${
-                    fieldErrors.password ? "border-red-500" : "border-white/10"
-                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
-                    fieldErrors.password ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  className={`w-full px-4 py-3 bg-card/20 border ${
+                    fieldErrors.password ? "border-error" : "border-border"
+                  } rounded-lg text-text placeholder-muted focus:outline-none focus:ring-2 ${
+                    fieldErrors.password ? "focus:ring-error" : "focus:ring-primary"
                   } focus:border-transparent transition-all`}
                   placeholder="••••••••"
                   required
@@ -293,12 +294,12 @@ const SignUp = () => {
                 {password && !fieldErrors.password && (
                   <div className="mt-2">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-400">Password strength:</span>
+                      <span className="text-xs text-muted">Password strength:</span>
                       <span className={`text-xs font-medium ${getPasswordStrengthColor(passwordStrength)}`}>
                         {passwordStrength.charAt(0).toUpperCase() + passwordStrength.slice(1)}
                       </span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-1.5">
+                    <div className="w-full bg-muted/30 rounded-full h-1.5">
                       <div
                         className={`h-1.5 rounded-full transition-all duration-300 ${getPasswordStrengthBgColor(
                           passwordStrength
@@ -308,14 +309,14 @@ const SignUp = () => {
                   </div>
                 )}
                 {fieldErrors.password && (
-                  <p className="mt-2 text-sm text-red-400">{fieldErrors.password}</p>
+                  <p className="mt-2 text-sm text-error">{fieldErrors.password}</p>
                 )}
               </div>
 
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-muted mb-2"
                 >
                   Confirm Password
                 </label>
@@ -330,45 +331,26 @@ const SignUp = () => {
                     }
                   }}
                   onBlur={handleConfirmPasswordBlur}
-                  className={`w-full px-4 py-3 bg-white/5 border ${
-                    fieldErrors.confirmPassword ? "border-red-500" : "border-white/10"
-                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
-                    fieldErrors.confirmPassword ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  className={`w-full px-4 py-3 bg-card/20 border ${
+                    fieldErrors.confirmPassword ? "border-error" : "border-border"
+                  } rounded-lg text-text placeholder-text-muted focus:outline-none focus:ring-2 ${
+                    fieldErrors.confirmPassword ? "focus:ring-error" : "focus:ring-primary"
                   } focus:border-transparent transition-all`}
                   placeholder="••••••••"
                   required
                 />
                 {fieldErrors.confirmPassword && (
-                  <p className="mt-2 text-sm text-red-400">{fieldErrors.confirmPassword}</p>
+                  <p className="mt-2 text-sm text-error">{fieldErrors.confirmPassword}</p>
                 )}
               </div>
 
               <button
                 type="submit"
                 disabled={isRequestingOtp}
-                className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
+                className="w-full bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-background py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
               >
                 {isRequestingOtp ? (
-                  <svg
-                    className="animate-spin h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                  <Loader2 className="animate-spin h-5 w-5" />
                 ) : (
                   "Send OTP"
                 )}
@@ -382,7 +364,7 @@ const SignUp = () => {
               <div>
                 <label
                   htmlFor="otp"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-muted mb-2"
                 >
                   Enter OTP
                 </label>
@@ -398,25 +380,25 @@ const SignUp = () => {
                     }
                   }}
                   onBlur={handleOtpBlur}
-                  className={`w-full px-4 py-3 bg-white/5 border ${
-                    fieldErrors.otp ? "border-red-500" : "border-white/10"
-                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 ${
-                    fieldErrors.otp ? "focus:ring-red-500" : "focus:ring-purple-500"
+                  className={`w-full px-4 py-3 bg-card/20 border ${
+                    fieldErrors.otp ? "border-error" : "border-border"
+                  } rounded-lg text-text placeholder-text-muted focus:outline-none focus:ring-2 ${
+                    fieldErrors.otp ? "focus:ring-error" : "focus:ring-primary"
                   } focus:border-transparent transition-all text-center text-2xl tracking-widest`}
                   placeholder="000000"
                   required
                   maxLength={6}
                 />
                 {fieldErrors.otp && (
-                  <p className="mt-2 text-sm text-red-400 text-center">{fieldErrors.otp}</p>
+                  <p className="mt-2 text-sm text-error text-center">{fieldErrors.otp}</p>
                 )}
-                <p className="mt-2 text-sm text-gray-400 text-center">
+                <p className="mt-2 text-sm text-muted text-center">
                   Didn't receive the code?{" "}
                   <button
                     type="button"
                     onClick={handleResendOtp}
                     disabled={isRequestingOtp}
-                    className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50"
+                    className="text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
                   >
                     Resend
                   </button>
@@ -426,29 +408,10 @@ const SignUp = () => {
               <button
                 type="submit"
                 disabled={isRegistering}
-                className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
+                className="w-full bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-background py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
               >
                 {isRegistering ? (
-                  <svg
-                    className="animate-spin h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                  <Loader2 className="animate-spin h-5 w-5" />
                 ) : (
                   "Create Account"
                 )}
@@ -457,7 +420,7 @@ const SignUp = () => {
               <button
                 type="button"
                 onClick={handleBackToInfo}
-                className="w-full text-gray-400 hover:text-gray-300 py-2 text-sm transition-colors"
+                className="w-full text-muted hover:text-text py-2 text-sm transition-colors"
               >
                 ← Back to edit details
               </button>
@@ -470,36 +433,19 @@ const SignUp = () => {
               <div className="mt-6">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/10"></div>
+                    <div className="w-full border-t border-border/20"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-transparent text-gray-400">
+                    <span className="px-4 bg-transparent text-text-muted">
                       Or continue with
                     </span>
                   </div>
                 </div>
 
                 <div className="mt-6 grid grid-cols-2 gap-4">
-                  <button className="flex items-center justify-center px-4 py-3 border border-white/10 rounded-lg hover:bg-white/5 transition-colors">
-                    <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                      <path
-                        fill="#fff"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      />
-                      <path
-                        fill="#fff"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      />
-                      <path
-                        fill="#fff"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      />
-                      <path
-                        fill="#fff"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      />
-                    </svg>
-                    <span className="text-white text-sm">Google</span>
+                  <button className="flex items-center justify-center px-4 py-3 border border-border/20 rounded-lg hover:bg-card/10 transition-colors">
+                    <Chrome className="w-5 h-5 mr-2" />
+                    <span className="text-text text-sm">Google</span>
                   </button>
                   <button className="flex items-center justify-center px-4 py-3 border border-white/10 rounded-lg hover:bg-white/5 transition-colors">
                     <svg className="w-5 h-5 mr-2" fill="#fff" viewBox="0 0 24 24">
@@ -512,11 +458,11 @@ const SignUp = () => {
             </>
           )}
 
-          <p className="mt-8 text-center text-gray-400 text-sm">
+          <p className="mt-8 text-center text-muted text-sm">
             Already have an account?{" "}
             <Link
               to="/signin"
-              className="text-purple-400 hover:text-purple-300 transition-colors"
+              className="text-primary hover:text-primary/80 transition-colors"
             >
               Sign in
             </Link>

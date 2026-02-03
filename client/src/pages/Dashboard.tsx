@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useLogoutMutation } from "../redux/auth/authApi";
 import type { RootState } from "../redux/store";
+import { Home, FileText, BarChart3, LogOut, Upload, TrendingUp } from "lucide-react";
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,77 +22,41 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-background">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-slate-800 border-r border-slate-700 p-6">
+      <aside className="fixed left-0 top-0 h-full w-64 bg-card border-r border-border p-6">
         <div className="flex items-center space-x-2 mb-10">
-          <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xl">CV</span>
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <span className="text-background font-bold text-xl">CV</span>
           </div>
-          <span className="text-white text-xl font-bold">CVision</span>
+          <span className="text-text text-xl font-bold">CVision</span>
         </div>
 
         <nav className="space-y-2">
           <a
             href="#"
-            className="flex items-center space-x-3 px-4 py-3 bg-purple-500/20 text-purple-400 rounded-lg"
+            className="flex items-center space-x-3 px-4 py-3 bg-primary/20 text-primary rounded-lg"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
+            <Home className="w-5 h-5" />
             <span>Dashboard</span>
           </a>
           <a
             href="#"
-            className="flex items-center space-x-3 px-4 py-3 text-gray-400 hover:bg-slate-700 rounded-lg transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 text-muted hover:bg-muted/10 hover:text-text rounded-lg transition-colors"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
+            <FileText className="w-5 h-5" />
             <span>My CVs</span>
           </a>
           <a
             href="#"
-            className="flex items-center space-x-3 px-4 py-3 text-gray-400 hover:bg-slate-700 rounded-lg transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 text-muted hover:bg-muted/10 hover:text-text rounded-lg transition-colors"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-              />
-            </svg>
+            <BarChart3 className="w-5 h-5" />
             <span>Analytics</span>
           </a>
           <a
             href="#"
-            className="flex items-center space-x-3 px-4 py-3 text-gray-400 hover:bg-slate-700 rounded-lg transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 text-muted hover:bg-muted/10 hover:text-text rounded-lg transition-colors"
           >
             <svg
               className="w-5 h-5"
@@ -119,21 +85,9 @@ const Dashboard = () => {
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="w-full flex items-center space-x-3 px-4 py-3 text-gray-400 hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full flex items-center space-x-3 px-4 py-3 text-muted hover:bg-error/10 hover:text-error rounded-lg transition-colors disabled:opacity-50"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
+            <LogOut className="w-5 h-5" />
             <span>{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
           </button>
         </div>
@@ -144,58 +98,35 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-            <p className="text-gray-400 mt-1">
+            <h1 className="text-3xl font-bold text-text">Dashboard</h1>
+            <p className="text-muted mt-1">
               Welcome back, {user?.name || "User"}! Here's your CV analysis overview.
             </p>
           </div>
-          <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
+          <button className="bg-primary hover:bg-primary/90 text-background px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2">
+            <Upload className="w-5 h-5" />
             <span>Upload New CV</span>
           </button>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="bg-card rounded-xl p-6 border border-border">
+            
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-purple-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
+              <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                <FileText className="w-6 h-6 text-primary" />
               </div>
             </div>
-            <h3 className="text-3xl font-bold text-white">3</h3>
-            <p className="text-gray-400 text-sm">CVs Analyzed</p>
+            <h3 className="text-3xl font-bold text-text">3</h3>
+            <p className="text-muted text-sm">CVs Analyzed</p>
           </div>
 
-          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="bg-card rounded-xl p-6 border border-border">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-success/20 rounded-lg flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-green-400"
+                  className="w-6 h-6 text-success"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -209,89 +140,52 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <h3 className="text-3xl font-bold text-white">85%</h3>
-            <p className="text-gray-400 text-sm">Average Score</p>
+            <h3 className="text-3xl font-bold text-text">85%</h3>
+            <p className="text-muted text-sm">Average Score</p>
           </div>
 
-          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="bg-card rounded-xl p-6 border border-border">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-yellow-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+              <div className="w-12 h-12 bg-warning/20 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-info" />
               </div>
             </div>
-            <h3 className="text-3xl font-bold text-white">7</h3>
-            <p className="text-gray-400 text-sm">Suggestions Pending</p>
+            <h3 className="text-3xl font-bold text-text">7</h3>
+            <p className="text-muted text-sm">Suggestions Pending</p>
           </div>
 
-          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="bg-card rounded-xl p-6 border border-border">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-blue-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                  />
-                </svg>
-              </div>
+              <div className="w-12 h-12 bg-info/20 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-info" />
             </div>
-            <h3 className="text-3xl font-bold text-white">+12%</h3>
-            <p className="text-gray-400 text-sm">Improvement</p>
+            <h3 className="text-3xl font-bold text-text">+12%</h3>
+            <p className="text-muted text-sm">Improvement</p>
           </div>
+        </div>
         </div>
 
         {/* Recent CVs */}
-        <div className="bg-slate-800 rounded-xl border border-slate-700">
-          <div className="p-6 border-b border-slate-700">
-            <h2 className="text-xl font-semibold text-white">Recent CVs</h2>
+        <div className="bg-card rounded-xl border border-border">
+          <div className="p-6 border-b border-border">
+            <h2 className="text-xl font-semibold text-text">Recent CVs</h2>
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted/10 rounded-lg">
                 <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                    <svg
-                      className="w-5 h-5 text-purple-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                  </div>
+                  <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-primary" />
                   <div>
-                    <h4 className="text-white font-medium">Software Engineer CV</h4>
-                    <p className="text-gray-400 text-sm">Analyzed 2 days ago</p>
+                    <h4 className="text-text font-medium">Software Engineer CV</h4>
+                    <p className="text-muted text-sm">Analyzed 2 days ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm">
                     92% Score
                   </span>
-                  <button className="text-gray-400 hover:text-white transition-colors">
+                  <button className="text-muted hover:text-text transition-colors">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -315,11 +209,11 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted/10 rounded-lg">
                 <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-secondary/20 rounded-lg flex items-center justify-center">
                     <svg
-                      className="w-5 h-5 text-blue-400"
+                      className="w-5 h-5 text-secondary"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -333,15 +227,15 @@ const Dashboard = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-white font-medium">Product Manager CV</h4>
-                    <p className="text-gray-400 text-sm">Analyzed 5 days ago</p>
+                    <h4 className="text-text font-medium">Product Manager CV</h4>
+                    <p className="text-muted text-sm">Analyzed 5 days ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-warning/20 text-warning rounded-full text-sm">
                     78% Score
                   </span>
-                  <button className="text-gray-400 hover:text-white transition-colors">
+                  <button className="text-muted hover:text-text transition-colors">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -365,11 +259,11 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-muted/10 rounded-lg">
                 <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-pink-500/20 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
                     <svg
-                      className="w-5 h-5 text-pink-400"
+                      className="w-5 h-5 text-accent"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -383,15 +277,15 @@ const Dashboard = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-white font-medium">Data Scientist CV</h4>
-                    <p className="text-gray-400 text-sm">Analyzed 1 week ago</p>
+                    <h4 className="text-text font-medium">Data Scientist CV</h4>
+                    <p className="text-muted text-sm">Analyzed 1 week ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm">
                     85% Score
                   </span>
-                  <button className="text-gray-400 hover:text-white transition-colors">
+                  <button className="text-muted hover:text-text transition-colors">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -417,9 +311,12 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        </div>
       </main>
+    
     </div>
   );
+
 };
 
 export default Dashboard;

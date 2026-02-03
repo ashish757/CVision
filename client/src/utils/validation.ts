@@ -136,11 +136,11 @@ export const validateOTP = (otp: string): ValidationResult => {
 export const getPasswordStrengthColor = (strength: 'weak' | 'medium' | 'strong'): string => {
     switch (strength) {
         case 'weak':
-            return 'text-red-400';
+            return 'text-error';
         case 'medium':
-            return 'text-yellow-400';
+            return 'text-warning';
         case 'strong':
-            return 'text-green-400';
+            return 'text-success';
     }
 };
 
@@ -164,10 +164,10 @@ export const getPasswordStrengthWidth = (strength: 'weak' | 'medium' | 'strong')
 export const getPasswordStrengthBgColor = (strength: 'weak' | 'medium' | 'strong'): string => {
     switch (strength) {
         case 'weak':
-            return 'bg-red-500';
+            return 'bg-error';
         case 'medium':
-            return 'bg-yellow-500';
+            return 'bg-warning';
         case 'strong':
-            return 'bg-green-500';
+            return 'bg-success';
     }
 };

@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import Logo from "../components/Logo.tsx";
+import ThemeToggle from "../components/ThemeToggle.tsx";
+import { Lightbulb, Zap, BarChart3 } from "lucide-react";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/10 to-background">
       {/* Navigation */}
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
@@ -11,10 +13,11 @@ const Landing = () => {
           <div className="flex items-center space-x-4">
             <Link
               to="/signin"
-              className="text-gray-300 hover:text-white transition-colors"
+              className="text-muted hover:text-primary transition-colors font-medium"
             >
               Sign In
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
@@ -22,13 +25,13 @@ const Landing = () => {
       {/* Hero Section */}
       <main className="container mx-auto px-6 pt-20 pb-32">
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+          <h1 className="text-5xl md:text-7xl font-bold text-text mb-6">
             AI-Powered{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
               CV Analysis
             </span>
           </h1>
-          <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+          <p className="text-xl text-muted mb-10 max-w-2xl mx-auto">
             Transform your resume with intelligent insights. Our AI analyzes
             your CV, identifies gaps, and provides actionable recommendations
             to help you land your dream job.
@@ -36,85 +39,55 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/signin"
-              className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg font-medium text-lg transition-colors w-full sm:w-auto"
+              className="bg-primary hover:bg-primary/90 text-background px-8 py-4 rounded-lg font-medium text-lg transition-all transform hover:scale-105 hover:shadow-lg w-full sm:w-auto shadow-primary/25"
             >
               Analyze Your CV Now
+            </Link>
+            <Link
+              to="/signin"
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-background px-8 py-4 rounded-lg font-medium text-lg transition-all w-full sm:w-auto"
+            >
+              Watch Demo
             </Link>
           </div>
         </div>
 
         {/* Features Section */}
         <div className="mt-32 grid md:grid-cols-3 gap-8">
-          <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-            <div className="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6">
-              <svg
-                className="w-7 h-7 text-purple-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                />
-              </svg>
+          <div className="bg-card/80 backdrop-blur-lg rounded-2xl p-8 border border-primary/20 hover:border-primary/50 transition-all group hover:shadow-2xl hover:shadow-primary/10">
+            <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-all">
+              <Lightbulb className="w-7 h-7 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">
+            <h3 className="text-xl font-semibold text-text mb-3">
               Smart Analysis
             </h3>
-            <p className="text-gray-400">
+            <p className="text-muted leading-relaxed">
               Our AI deeply analyzes your CV structure, content, and formatting
               to provide comprehensive insights.
             </p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-            <div className="w-14 h-14 bg-pink-500/20 rounded-xl flex items-center justify-center mb-6">
-              <svg
-                className="w-7 h-7 text-pink-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
+          <div className="bg-card/80 backdrop-blur-lg rounded-2xl p-8 border border-secondary/20 hover:border-secondary/50 transition-all group hover:shadow-2xl hover:shadow-secondary/10">
+            <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-secondary/20 transition-all">
+              <Zap className="w-7 h-7 text-secondary" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">
+            <h3 className="text-xl font-semibold text-text mb-3">
               Instant Feedback
             </h3>
-            <p className="text-gray-400">
+            <p className="text-muted leading-relaxed">
               Get immediate, actionable recommendations to improve your CV and
               stand out from the competition.
             </p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-            <div className="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
-              <svg
-                className="w-7 h-7 text-blue-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
+          <div className="bg-card/80 backdrop-blur-lg rounded-2xl p-8 border border-accent/20 hover:border-accent/50 transition-all group hover:shadow-2xl hover:shadow-accent/10">
+            <div className="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-all">
+              <BarChart3 className="w-7 h-7 text-accent" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-3">
+            <h3 className="text-xl font-semibold text-text mb-3">
               Industry Benchmarks
             </h3>
-            <p className="text-gray-400">
+            <p className="text-muted leading-relaxed">
               Compare your CV against industry standards and see how you stack
               up in your target field.
             </p>
@@ -123,8 +96,8 @@ const Landing = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-8">
-        <div className="container mx-auto px-6 text-center text-gray-400">
+      <footer className="border-t border-border/30 py-8">
+        <div className="container mx-auto px-6 text-center text-muted">
           <p>&copy; 2026 CVision. All rights reserved.</p>
         </div>
       </footer>
