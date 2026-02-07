@@ -5,7 +5,7 @@ import { Lightbulb, Zap, BarChart3 } from "lucide-react";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/10 to-background">
+    <div className="min-h-screen landing-bg">
       {/* Navigation */}
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
@@ -39,13 +39,13 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/signin"
-              className="bg-primary hover:bg-primary/90 text-background px-8 py-4 rounded-lg font-medium text-lg transition-all transform hover:scale-105 hover:shadow-lg w-full sm:w-auto shadow-primary/25"
+              className="bg-primary text-white hover:bg-primary/90 px-8 py-4 rounded-lg font-medium text-lg transition-all transform hover:scale-105 hover:shadow-lg w-full sm:w-auto shadow-primary/25"
             >
               Analyze Your CV Now
             </Link>
             <Link
               to="/signin"
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-background px-8 py-4 rounded-lg font-medium text-lg transition-all w-full sm:w-auto"
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 rounded-lg font-medium text-lg transition-all w-full sm:w-auto"
             >
               Watch Demo
             </Link>
@@ -55,41 +55,39 @@ const Landing = () => {
         {/* Features Section */}
         <div className="mt-32 grid md:grid-cols-3 gap-8">
           <div className="bg-card/80 backdrop-blur-lg rounded-2xl p-8 border border-primary/20 hover:border-primary/50 transition-all group hover:shadow-2xl hover:shadow-primary/10">
-            <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-all">
-              <Lightbulb className="w-7 h-7 text-primary" />
+            <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-yellow-500/30 transition-all">
+              <Lightbulb className="w-7 h-7 text-primary group-hover:text-yellow-700" />
             </div>
             <h3 className="text-xl font-semibold text-text mb-3">
-              Smart Analysis
+              <span className="text-yellow-500 ">Light</span> but Heavy Analysis
             </h3>
             <p className="text-muted leading-relaxed">
-              Our AI deeply analyzes your CV structure, content, and formatting
-              to provide comprehensive insights.
+              Our AI Heavily analyzes CV structure, content, and formatting
+              to provide comprehensive insights, intelligently, instantly.
             </p>
           </div>
 
           <div className="bg-card/80 backdrop-blur-lg rounded-2xl p-8 border border-secondary/20 hover:border-secondary/50 transition-all group hover:shadow-2xl hover:shadow-secondary/10">
-            <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-secondary/20 transition-all">
-              <Zap className="w-7 h-7 text-secondary" />
+            <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/30 transition-all">
+              <Zap className="w-7 h-7 text-secondary group-hover:text-blue-700" />
             </div>
             <h3 className="text-xl font-semibold text-text mb-3">
-              Instant Feedback
+              <span className="text-blue-500">Thunder</span> But Transparent
             </h3>
             <p className="text-muted leading-relaxed">
-              Get immediate, actionable recommendations to improve your CV and
-              stand out from the competition.
+              As powerful as a lightning strike, but with transparency and unbias at its core.
             </p>
           </div>
 
           <div className="bg-card/80 backdrop-blur-lg rounded-2xl p-8 border border-accent/20 hover:border-accent/50 transition-all group hover:shadow-2xl hover:shadow-accent/10">
-            <div className="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-accent/20 transition-all">
-              <BarChart3 className="w-7 h-7 text-accent" />
+            <div className="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-500/30 transition-all">
+              <BarChart3 className="w-7 h-7 text-accent group-hover:text-green-700" />
             </div>
             <h3 className="text-xl font-semibold text-text mb-3">
-              Industry Benchmarks
+              <span className="text-green-500">Graphs</span> but Real Benchmarks
             </h3>
             <p className="text-muted leading-relaxed">
-              Compare your CV against industry standards and see how you stack
-              up in your target field.
+              Now Control the Analysis and Rankings based on customized and weighted parameters.
             </p>
           </div>
         </div>
