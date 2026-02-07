@@ -15,6 +15,7 @@ import { PASSWORD_SALT_ROUNDS } from '../../utils/constants';
 import { otpTemplate } from '../../utils/emailTemplates';
 import type { User } from '@prisma/client';
 import * as crypto from 'node:crypto';
+import { OtpService } from '../../redis/otp.service';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly redisOTPService: OtpService,
   ) {}
 
   async sendOtp(otpDto: SendOtpDto) {
@@ -38,12 +40,16 @@ export class AuthService {
       'CVision - Email Verification Code',
       otpTemplate(otpDto.name, otp),
     );
+
+    await this.redisOTPService.saveOtp(`otp:${otpDto.email}`, otp, 300); // Store OTP in Redis with 5 min TTL
+
     return { emailId: otpDto.email };
   }
 
   async register(dto: AuthDto) {
     // verify the opt first
-    // TODO: verify OTP, setup redis
+    const verify: boolean = await this.redisOTPService.verifyOtp(dto.user.email, dto.otp);
+    if (!verify) throw new BadRequestException('Invalid or expired OTP');
 
     // after opt verification=, check if user with email already exists
     const existing = await this.prisma.user.findUnique({

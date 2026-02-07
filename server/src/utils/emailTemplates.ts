@@ -225,7 +225,7 @@ export const emailChangedSuccessTemplate = (name: string, newEmail: string) => {
   return emailWrapper(content);
 };
 
-export const otpTemplate = (name: string, otp: string) => {
+export const otpTemplate = (name: string, otp: number) => {
   const content = `
         <div class="email-body">
             <h2 style="color: #1e293b; margin-top: 0;">Email Verification Code</h2>
