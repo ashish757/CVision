@@ -7,8 +7,7 @@ import { generateOTP } from '../utils/otp';
 export class OtpService {
   constructor(private redis: RedisService) {}
 
-  async saveOtp(email: string, ttl: number = 300) {
-    const otp = generateOTP();
+  async saveOtp(email: string, otp: number, ttl: number = 300) {
 
     try {
       await this.redis.client.set(`otp:${email}`, otp, 'EX', ttl);
