@@ -30,7 +30,12 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Landing/>}/>
+                <Route path="/" element={
+                    <AuthRoute>
+                        <Landing/>
+                    </AuthRoute>
+                }/>
+
                 <Route
                     path="/signin"
                     element={
