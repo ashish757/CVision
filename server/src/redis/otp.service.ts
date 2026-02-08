@@ -10,7 +10,7 @@ export class OtpService {
   async saveOtp(email: string, otp: number, ttl: number = 300) {
 
     try {
-      await this.redis.client.set(`otp:${email}`, otp, 'EX', ttl);
+      await this.redis.client.set(`otp:${email}`, otp.toString(), 'EX', ttl);
       return true;
     } catch {
       return false;

@@ -23,7 +23,7 @@ export class RedisService implements OnModuleDestroy {
           return null; // Stop retrying
         }
 
-        return Math.min(times * 1000, 3000); // dellay
+        return Math.min(times * 1000, 3000); // delay
       },
 
       maxRetriesPerRequest: 2,

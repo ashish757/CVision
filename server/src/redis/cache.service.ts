@@ -1,10 +1,10 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {Logger} from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { RedisService } from './redis.service';
 
 @Injectable()
-export class CacheService implements OnModuleDestroy {
+export class CacheService {
   private readonly logger = new Logger(CacheService.name);
 
   constructor(private readonly redis: RedisService) {
@@ -79,8 +79,4 @@ export class CacheService implements OnModuleDestroy {
     }
   }
 
-  onModuleDestroy() {
-    this.logger.log('Closing Redis connection');
-    this.redis.client.quit();
-  }
 }

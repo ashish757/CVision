@@ -41,7 +41,7 @@ export class AuthService {
       otpTemplate(otpDto.name, otp),
     );
 
-    await this.redisOTPService.saveOtp(`otp:${otpDto.email}`, otp, 300); // Store OTP in Redis with 5 min TTL
+    await this.redisOTPService.saveOtp(otpDto.email, otp, 300); // Store OTP in Redis with 5 min TTL
 
     return { emailId: otpDto.email };
   }
