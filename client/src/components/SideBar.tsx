@@ -1,7 +1,22 @@
-import {Home, BarChart3, FileText, LucideSettings2, LogOut} from "lucide-react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Home, BarChart3, FileText, LucideSettings2, LogOut, type LucideIcon} from "lucide-react";
+import {useNavigate} from "react-router-dom";
 import { useLogoutMutation } from "../redux/auth/authApi";
 import {Link} from "react-router-dom";
+import ThemeToggle from "./ThemeToggle.tsx";
+
+const Item = ({ to, icon: Icon, label }: { to: string; icon: LucideIcon; label: string }) => {
+    const isActive = location.pathname === to;
+
+    return (
+        <Link
+            to={to}
+            className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors  ${isActive ? "bg-primary text-white" : "hover:bg-primary/10 text-b"} `}
+        >
+            <Icon className="w-5 h-5" />
+            <span>{label}</span>
+        </Link>
+    );
+}
 
 const SideBar = () => {
     const navigate = useNavigate();
@@ -19,9 +34,6 @@ const SideBar = () => {
         }
     };
 
-    const isActive = (path: string) => location.pathname === path;
-
-
 
     return (
         <aside className="fixed left-0 top-0 h-full w-64 bg-card border-r border-border p-6">
@@ -33,38 +45,14 @@ const SideBar = () => {
             </div>
 
             <nav className="space-y-2">
-                <Link
-                    to="/dashboard"
-                    className={"flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors " + (isActive("/dashboard") ? "bg-primary/30 text-primary" : "hover:bg-muted/10 hover:text-text") }
-                >
-                    <Home className="w-5 h-5" />
-                    <span>Dashboard</span>
-                </Link>
-                <Link
-                    to="/analyse"
-                    className={"flex items-center space-x-3 px-4 py-3 text-muted rounded-lg transition-colors " + (isActive("/analyse") ? "bg-primary/30 text-primary" : "hover:bg-muted/10 hover:text-text") }
-                >
-                    <FileText className="w-5 h-5" />
-                    <span>Analyse</span>
-                </Link>
-                <Link
-                    to="/analytics"
-                    className={"flex items-center space-x-3 px-4 py-3 text-muted rounded-lg transition-colors " + (isActive("/analytics") ? "bg-primary/30 text-primary" : "hover:bg-muted/10 hover:text-text") }
-                >
-                    <BarChart3 className="w-5 h-5" />
-                    <span>Analytics</span>
-                </Link>
-
+                <Item icon={Home} label={"Dashboard"} to="/dashboard" />
+                <Item icon={FileText} label={"Analyse"} to="/analyse" />
+                <Item icon={BarChart3} label={"Analytics"} to="/analytics" />
             </nav>
 
             <div className="absolute bottom-6 left-6 right-6">
-                <Link
-                    to="/settings"
-                    className={"flex items-center space-x-3 px-4 py-3 text-muted  rounded-lg transition-colors " + (isActive("/settings") ? "bg-primary/30 text-primary" : "hover:bg-muted/10 hover:text-text")}
-                >
-                    <LucideSettings2 className="w-5 h-5" />
-                    <span>Settings</span>
-                </Link>
+                <Item icon={LucideSettings2} label={"Settings"} to="/settings" />
+                <ThemeToggle icon={false}/>
                 <button
                     onClick={handleLogout}
                     disabled={isLoggingOut}
