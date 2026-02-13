@@ -1,4 +1,3 @@
-
 import { FileText, Upload, TrendingUp, Check, LucideScanEye} from "lucide-react";
 import StatCard from "../components/StatCard.tsx";
 import {useSelector} from "react-redux";
