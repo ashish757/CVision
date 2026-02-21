@@ -17,5 +17,29 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now())
 
+  // Relationships
+  resumes Resume[]
+
   @@index([email])
+}
+
+model Resume {
+  id              String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  userId          String
+  filename        String
+  filePath        String
+  status          String    @default("UPLOADED")
+  score           Int?
+  extractedSkills String[]  @default([])
+  ranking         String? // JSON string for ranking data
+  errorMessage    String?
+  uploadedAt      DateTime  @default(now())
+  processedAt     DateTime?
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([uploadedAt])
 }
