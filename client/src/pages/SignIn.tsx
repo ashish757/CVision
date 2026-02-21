@@ -145,7 +145,7 @@ const SignIn = () => {
                 onBlur={handlePasswordBlur}
                 className={`w-full px-4 py-3 bg-card/20 border ${
                   fieldErrors.password ? "border-error" : "border-border"
-                } rounded-lg text-text placeholder-text-muted focus:outline-none focus:ring-2 ${
+                } rounded-lg text-text placeholder-muted focus:outline-none focus:ring-2 ${
                   fieldErrors.password ? "focus:ring-error" : "focus:ring-primary"
                 } focus:border-transparent transition-all`}
                 placeholder="••••••••"
