@@ -21,6 +21,12 @@ export const API_CONFIG = {
             LOGOUT: '/auth/logout',
             SEND_OTP: '/auth/send-otp',
             REFRESH_TOKEN: '/auth/refresh-token',
+        },
+        RESUMES: {
+            UPLOAD: '/resumes/upload',
+            STATUS: (id: string) => `/resumes/${id}/status`,
+            DETAILS: (id: string) => `/resumes/${id}`,
+            LIST: '/resumes',
         }
     },
 

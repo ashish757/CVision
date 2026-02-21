@@ -171,3 +171,51 @@ export const getPasswordStrengthBgColor = (strength: 'weak' | 'medium' | 'strong
             return 'bg-success';
     }
 };
+
+/**
+ * File validation constants
+ */
+export const FILE_VALIDATION = {
+    MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB in bytes
+    ALLOWED_TYPES: ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'],
+    ALLOWED_EXTENSIONS: ['.pdf', '.docx', '.doc'],
+} as const;
+
+/**
+ * Validate uploaded file for resume processing
+ */
+export const validateResumeFile = (file: File): ValidationResult => {
+    if (!file) {
+        return { isValid: false, error: 'Please select a file' };
+    }
+
+    // Check file size
+    if (file.size > FILE_VALIDATION.MAX_FILE_SIZE) {
+        return { isValid: false, error: 'File size must be less than 5MB' };
+    }
+
+    // Check file type
+    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    const isValidType = (FILE_VALIDATION.ALLOWED_TYPES as readonly string[]).includes(file.type) ||
+                       (FILE_VALIDATION.ALLOWED_EXTENSIONS as readonly string[]).includes(fileExtension);
+
+    if (!isValidType) {
+        return { isValid: false, error: 'Only PDF and DOCX files are allowed' };
+    }
+
+    return { isValid: true };
+};
+
+/**
+ * Format file size for display
+ */
+export const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+

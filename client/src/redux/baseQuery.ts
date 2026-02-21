@@ -141,7 +141,7 @@ const handle401Error = async (
     api: BaseQueryApi,
     extraOptions: object
 ): Promise<ReturnType<typeof baseQuery>> => {
-    console.warn('Received 401, attempting token refresh...');
+    console.warn('Received 401, attempting token refresh...', { args });
 
     if (!isRefreshing) {
         isRefreshing = true;
@@ -151,11 +151,13 @@ const handle401Error = async (
                 const success = await executeTokenRefresh(api, extraOptions);
 
                 if (!success) {
+                    console.error('Token refresh failed, user will be logged out');
                     return;
                 }
 
                 console.log('Token refreshed after 401');
             } catch (error) {
+                console.error('Error during token refresh:', error);
                 handleFailedRefresh(api, `Refresh error after 401: ${error}`);
                 return;
             } finally {
@@ -168,8 +170,19 @@ const handle401Error = async (
     // Wait for refresh to complete
     await refreshPromise;
 
-    // Retry the original request with the new token
-    return baseQuery(args, api, extraOptions);
+    // Only retry if we have a token now
+    if (tokenManager.getAccessToken()) {
+        console.log('Retrying request after token refresh');
+        return baseQuery(args, api, extraOptions);
+    } else {
+        console.error('No token available after refresh, cannot retry request');
+        return {
+            error: {
+                status: 401,
+                data: { message: 'Authentication required' },
+            } as FetchBaseQueryError,
+        };
+    }
 };
 
 /**
