@@ -9,16 +9,39 @@ export class RedisService implements OnModuleDestroy {
   private hasLoggedError = false;
 
   constructor() {
+    const host = process.env.REDIS_HOST || 'localhost';
+    const port = Number(process.env.REDIS_PORT) || 6379;
+    const password = process.env.REDIS_PASSWORD;
+
+    // Detect Azure Redis automatically
+    const isAzureRedis = host.includes('windows.net');
+
+    this.logger.log(
+      `Initializing Redis connection → Host: ${host}, Mode: ${
+        isAzureRedis ? 'Azure TLS' : 'Local'
+      }`,
+    );
+
     this.client = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: Number(process.env.REDIS_PORT) || 6379,
+      host,
+      port,
+      password,
+
+      // Azure-specific TLS config
+      ...(isAzureRedis && {
+        tls: {
+          servername: host,
+        },
+        connectTimeout: 10000,
+        keepAlive: 10000,
+      }),
 
       retryStrategy: (times) => {
         // Retry connection with exponential backoff
-        if (times > 3) {
+        if (times > 100) {
           // Stop retrying after 3 attempts
           this.logger.error(
-            'Redis connection failed after 3 attempts. Stopping retries.',
+            'Redis connection failed after 100 attempts. Stopping retries.',
           );
           return null; // Stop retrying
         }
@@ -31,6 +54,8 @@ export class RedisService implements OnModuleDestroy {
       lazyConnect: false,
     });
 
+    // EVENT HANDLERS
+
     this.client.on('connect', () => {
       this.isConnected = true;
       this.hasLoggedError = false;
@@ -39,21 +64,24 @@ export class RedisService implements OnModuleDestroy {
 
     this.client.on('ready', () => {
       this.isConnected = true;
-      this.hasLoggedError = false;
       this.logger.log('Redis is ready to accept commands');
     });
 
     this.client.on('error', (error) => {
       this.isConnected = false;
-      // Only log error once to avoid spam
+
       if (!this.hasLoggedError) {
         this.logger.error(
           'Redis connection error. Token blacklisting will be disabled.',
           error.message,
         );
-        this.logger.warn(
-          'Make sure Redis is running: redis-server or docker-compose up redis',
-        );
+
+        if (!isAzureRedis) {
+          this.logger.warn(
+            'Make sure Redis is running locally: docker-compose up redis',
+          );
+        }
+
         this.hasLoggedError = true;
       }
     });
@@ -68,6 +96,18 @@ export class RedisService implements OnModuleDestroy {
     });
   }
 
+  // HEALTH CHECK METHOD
+
+  async isHealthy(): Promise<boolean> {
+    try {
+      await this.client.ping();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // CLEAN SHUTDOWN
   onModuleDestroy() {
     this.logger.log('Closing Redis connection');
     this.client.quit();
