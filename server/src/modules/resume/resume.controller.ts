@@ -22,7 +22,7 @@ import { ResumeStatusQueryDto } from './DTO/resume.dto';
 // Extend Request interface to include user
 interface AuthenticatedRequest extends Request {
   user?: {
-    id: string;
+    sub: string;
     email: string;
     name?: string;
   };
@@ -69,7 +69,8 @@ export class ResumeController {
       throw new BadRequestException('No file uploaded');
     }
 
-    const userId = req.user?.id;
+    const userId = req.user?.sub;
+    console.log("USER", req.user);
     if (!userId) {
       throw new BadRequestException('User not authenticated');
     }
@@ -93,7 +94,7 @@ export class ResumeController {
     @Param('id') resumeId: string,
     @Req() req: AuthenticatedRequest,
   ) {
-    const userId = req.user?.id;
+    const userId = req.user?.sub;
     if (!userId) {
       throw new BadRequestException('User not authenticated');
     }
@@ -113,7 +114,7 @@ export class ResumeController {
     @Param('id') resumeId: string,
     @Req() req: AuthenticatedRequest,
   ) {
-    const userId = req.user?.id;
+    const userId = req.user?.sub;
     if (!userId) {
       throw new BadRequestException('User not authenticated');
     }
@@ -133,7 +134,7 @@ export class ResumeController {
     @Query() query: ResumeStatusQueryDto,
     @Req() req: AuthenticatedRequest,
   ) {
-    const userId = req.user?.id;
+    const userId = req.user?.sub;
     if (!userId) {
       throw new BadRequestException('User not authenticated');
     }
