@@ -89,13 +89,42 @@
 }
 
 /* Base body styles using our variables */
-body, body.theme-dark {
+body {
   background-color: rgb(var(--background));
-  /*color: rgb(var(--text));*/
+  color: rgb(var(--text));
   transition: background-color var(--transition), color var(--transition);
+}
+
+/* Apply dark theme when body has theme-dark class */
+body.theme-dark {
+  background-color: rgb(var(--background));
+  color: rgb(var(--text));
+}
+
+/* Ensure all elements inherit theme transitions */
+* {
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition);
 }
 
 .landing-bg {
   --tw-gradient-position: to bottom right in oklab;
   background-image: linear-gradient(var(--tw-gradient-position), rgb(var(--primary) / 0.1), rgb(var(--secondary) / 0.1));
 }
+
+/* File upload styles */
+.file-upload-container {
+  background-color: rgb(var(--card));
+  border-color: rgb(var(--border));
+  color: rgb(var(--text));
+}
+
+.file-upload-drag-active {
+  border-color: rgb(var(--primary));
+  background-color: rgb(var(--primary) / 0.05);
+}
+
+.file-upload-error {
+  border-color: rgb(var(--error));
+  background-color: rgb(var(--error) / 0.05);
+}
+
