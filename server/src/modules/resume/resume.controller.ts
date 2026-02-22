@@ -139,4 +139,16 @@ export class ResumeController {
       data: result,
     };
   }
+
+  @Get('ai/health')
+  async getAiServiceHealth() {
+    const health = await this.resumeService.getAiServiceHealth();
+
+    return {
+      status: 'success',
+      statusCode: HttpStatus.OK,
+      message: 'AI service health retrieved successfully',
+      data: health,
+    };
+  }
 }

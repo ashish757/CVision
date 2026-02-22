@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { AiService } from '../ai/ai.service';
 
 export enum ResumeStatus {
   UPLOADED = 'UPLOADED',
@@ -10,7 +11,12 @@ export enum ResumeStatus {
 
 @Injectable()
 export class ResumeService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(ResumeService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private aiService: AiService,
+  ) {}
 
   async uploadResume(userId: string, filename: string, filePath: string) {
     // Create resume record in database
@@ -24,16 +30,10 @@ export class ResumeService {
       },
     });
 
-    // TODO: Queue for processing with AI service
-    // For now, we'll simulate processing by updating status
-    setTimeout(async () => {
-      await this.updateResumeStatus(resume.id, ResumeStatus.PROCESSING);
+    this.logger.log(`Resume uploaded: ${resume.id} - ${filename}`);
 
-      // Simulate processing time
-      setTimeout(async () => {
-        await this.completeProcessing(resume.id);
-      }, 5000);
-    }, 1000);
+    // Start AI processing asynchronously
+    this.processResumeWithAI(resume.id, filePath);
 
     return {
       resumeId: resume.id,
@@ -51,13 +51,25 @@ export class ResumeService {
       throw new NotFoundException('Resume not found');
     }
 
+    // Parse ranking data if available
+    let parsedRanking = null;
+    if (resume.ranking) {
+      try {
+        parsedRanking = JSON.parse(resume.ranking);
+      } catch (error) {
+        this.logger.warn(`Failed to parse ranking data for resume ${resumeId}`, error.message);
+      }
+    }
+
     return {
       resumeId: resume.id,
       filename: resume.filename,
       status: resume.status,
       score: resume.score,
       extractedSkills: resume.extractedSkills || [],
-      ranking: resume.ranking ? JSON.parse(resume.ranking) : null,
+      education: resume.education,
+      ranking: parsedRanking,
+      uploadedAt: resume.uploadedAt,
       processedAt: resume.processedAt,
       errorMessage: resume.errorMessage,
     };
@@ -92,38 +104,70 @@ export class ResumeService {
     };
   }
 
-  private async updateResumeStatus(resumeId: string, status: ResumeStatus) {
+  async getAiServiceHealth() {
+    try {
+      const health = await this.aiService.checkHealth();
+      this.logger.log('AI service health check passed');
+      return health;
+    } catch (error) {
+      this.logger.error('AI service health check failed', error.message);
+      throw error;
+    }
+  }
+
+  private async updateResumeStatus(resumeId: string, status: ResumeStatus, errorMessage?: string) {
     await this.prisma.resume.update({
       where: { id: resumeId },
-      data: { status },
+      data: {
+        status,
+        ...(errorMessage && { errorMessage }),
+      },
     });
   }
 
-  private async completeProcessing(resumeId: string) {
-    // Simulate AI processing results
-    const mockResults = {
-      status: ResumeStatus.DONE,
-      score: Math.floor(Math.random() * 40) + 60, // Score between 60-100
-      extractedSkills: [
-        'JavaScript',
-        'React',
-        'Node.js',
-        'TypeScript',
-        'Python',
-        'SQL',
-        'Git',
-        'Agile',
-      ],
-      ranking: JSON.stringify({
-        position: Math.floor(Math.random() * 50) + 1,
-        totalCandidates: 100,
-      }),
-      processedAt: new Date(),
-    };
+  private async processResumeWithAI(resumeId: string, filePath: string) {
+    try {
+      this.logger.log(`Starting AI processing for resume: ${resumeId}`);
 
-    await this.prisma.resume.update({
-      where: { id: resumeId },
-      data: mockResults,
-    });
+      // Update status to processing
+      await this.updateResumeStatus(resumeId, ResumeStatus.PROCESSING);
+
+      // Call AI service for analysis
+      const analysisResult = await this.aiService.analyzeResume(filePath);
+
+      this.logger.log(`AI analysis completed for resume: ${resumeId}, Score: ${analysisResult.score}`);
+
+      // Calculate ranking (mock for now, but based on real AI score)
+      const ranking = {
+        position: Math.floor(Math.random() * 50) + 1, // This could be improved with actual ranking logic
+        totalCandidates: 100,
+        percentile: Math.floor((100 - analysisResult.score) + Math.random() * 20),
+      };
+
+      // Update resume with AI results
+      await this.prisma.resume.update({
+        where: { id: resumeId },
+        data: {
+          status: ResumeStatus.DONE,
+          score: analysisResult.score,
+          extractedSkills: analysisResult.skills,
+          education: analysisResult.education,
+          ranking: JSON.stringify(ranking),
+          processedAt: new Date(),
+        },
+      });
+
+      this.logger.log(`Resume processing completed successfully: ${resumeId}`);
+
+    } catch (error) {
+      this.logger.error(`AI processing failed for resume: ${resumeId}`, error.stack);
+
+      // Update status to error
+      await this.updateResumeStatus(
+        resumeId,
+        ResumeStatus.ERROR,
+        error.message || 'AI processing failed'
+      );
+    }
   }
 }
