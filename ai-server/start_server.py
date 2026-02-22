@@ -15,14 +15,16 @@ try:
     print("App loaded successfully")
 
     import uvicorn
-    print("Starting server on port 8003...")
+    print("Starting server on port 4000...")
 
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=4000,
-        log_level="info"
-    )
+    if __name__ == "__main__":
+        uvicorn.run(
+            "app.main:app",
+            host="0.0.0.0",
+            port=4000,
+            log_level="info",
+            reload=True
+        )
 
 except Exception as e:
     print(f"Error starting server: {e}")
