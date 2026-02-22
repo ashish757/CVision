@@ -47,9 +47,21 @@ export class AiService {
     try {
       this.logger.log(`Starting resume analysis for file: ${filePath}`);
 
+      // Check if file exists before sending to AI service
+      const fs = require('fs');
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`File does not exist: ${filePath}`);
+      }
+
+      // Get file stats for logging
+      const stats = fs.statSync(filePath);
+      this.logger.log(`File size: ${stats.size} bytes`);
+
       const request: AIAnalysisRequest = {
         file_path: filePath,
       };
+
+      this.logger.log(`Sending request to AI service: ${JSON.stringify(request)}`);
 
       const response: any = await this.httpClient.post(
         '/api/v1/analyze',
@@ -66,13 +78,20 @@ export class AiService {
         const status = error.response?.status || 500;
         const message = error.response?.data?.detail || 'AI service analysis failed';
 
+        this.logger.error(`AI service error response: ${JSON.stringify(error.response.data)}`);
+
+        // Handle validation errors (422) as bad request
+        const httpStatus = (status === 422 || (status >= 400 && status < 500))
+          ? HttpStatus.BAD_REQUEST
+          : HttpStatus.INTERNAL_SERVER_ERROR;
+
         throw new HttpException(
           {
             message: 'Resume analysis failed',
             details: message,
             aiServiceError: true,
           },
-          status >= 400 && status < 500 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR,
+          httpStatus,
         );
       }
 

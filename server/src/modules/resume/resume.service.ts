@@ -132,8 +132,14 @@ export class ResumeService {
       // Update status to processing
       await this.updateResumeStatus(resumeId, ResumeStatus.PROCESSING);
 
+      // Convert relative path to absolute path for AI service
+      const path = require('path');
+      const absoluteFilePath = path.resolve(filePath);
+
+      this.logger.log(`Sending file to AI service: ${absoluteFilePath}`);
+
       // Call AI service for analysis
-      const analysisResult = await this.aiService.analyzeResume(filePath);
+      const analysisResult = await this.aiService.analyzeResume(absoluteFilePath);
 
       this.logger.log(`AI analysis completed for resume: ${resumeId}, Score: ${analysisResult.score}`);
 
