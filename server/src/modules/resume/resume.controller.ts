@@ -70,10 +70,6 @@ export class ResumeController {
     }
 
     const userId = req.user?.sub;
-    console.log("USER", req.user);
-    if (!userId) {
-      throw new BadRequestException('User not authenticated');
-    }
 
     const result = await this.resumeService.uploadResume(
       userId,
@@ -95,9 +91,6 @@ export class ResumeController {
     @Req() req: AuthenticatedRequest,
   ) {
     const userId = req.user?.sub;
-    if (!userId) {
-      throw new BadRequestException('User not authenticated');
-    }
 
     const result = await this.resumeService.getResumeStatus(resumeId, userId);
 
@@ -115,9 +108,6 @@ export class ResumeController {
     @Req() req: AuthenticatedRequest,
   ) {
     const userId = req.user?.sub;
-    if (!userId) {
-      throw new BadRequestException('User not authenticated');
-    }
 
     const result = await this.resumeService.getResumeStatus(resumeId, userId);
 
@@ -135,9 +125,7 @@ export class ResumeController {
     @Req() req: AuthenticatedRequest,
   ) {
     const userId = req.user?.sub;
-    if (!userId) {
-      throw new BadRequestException('User not authenticated');
-    }
+
 
     const page = parseInt(query.page || '1');
     const limit = parseInt(query.limit || '10');
