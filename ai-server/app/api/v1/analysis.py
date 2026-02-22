@@ -1,11 +1,10 @@
 from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import JSONResponse
 import logging
 import os
 from app.models.analysis import AnalyzeRequest, AnalyzeResponse, ErrorResponse
 from app.services.analysis_service import AnalysisService
 
-# Configure logging
+# Get logger for this module
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/analyze", tags=["Analysis"])
@@ -57,9 +56,12 @@ async def analyze_resume(request: AnalyzeRequest):
         HTTPException: For various error conditions
     """
     try:
+        logger.info("*" * 70)
+        logger.info(f"[ROUTER] Received analysis request for: {request.file_path}")
+
         # Validate file exists
         if not os.path.exists(request.file_path):
-            logger.error(f"File not found: {request.file_path}")
+            logger.error(f"[ROUTER] File not found: {request.file_path}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"File not found: {request.file_path}"
@@ -67,7 +69,7 @@ async def analyze_resume(request: AnalyzeRequest):
 
         # Validate file type
         if not AnalysisService.validate_file_type(request.file_path):
-            logger.error(f"Unsupported file type: {request.file_path}")
+            logger.error(f"[ROUTER] Unsupported file type: {request.file_path}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Unsupported file type. Only PDF and DOCX files are supported."
@@ -75,21 +77,26 @@ async def analyze_resume(request: AnalyzeRequest):
 
         # Get file info for logging
         file_size_mb = AnalysisService.get_file_size_mb(request.file_path)
-        logger.info(f"Processing file: {os.path.basename(request.file_path)} ({file_size_mb} MB)")
+        logger.info(f"[ROUTER] Processing file: {os.path.basename(request.file_path)} ({file_size_mb} MB)")
 
-        # Perform analysis
+        # Perform analysis with text extraction
         result = await AnalysisService.analyze_resume(request.file_path)
 
-        logger.info(f"Analysis successful for: {os.path.basename(request.file_path)}")
+        logger.info(f"[ROUTER] ✅ Analysis successful for: {os.path.basename(request.file_path)}")
+        logger.info(f"[ROUTER] ✅ Score: {result.score}, Skills: {len(result.skills)}, Experience: {result.experience_years}y")
+        logger.info("*" * 70)
         return result
 
-    except HTTPException:
+    except HTTPException as e:
+        logger.error(f"[ROUTER] HTTP Exception: {e.detail}")
+        logger.error("*" * 70)
         # Re-raise HTTP exceptions
         raise
 
     except ValueError as e:
         # Handle validation errors
-        logger.error(f"Validation error: {str(e)}")
+        logger.error(f"[ROUTER] Validation error: {str(e)}")
+        logger.error("*" * 70)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
@@ -97,7 +104,8 @@ async def analyze_resume(request: AnalyzeRequest):
 
     except Exception as e:
         # Handle unexpected errors
-        logger.error(f"Unexpected error during analysis: {str(e)}", exc_info=True)
+        logger.error(f"[ROUTER] ❌ Unexpected error during analysis: {str(e)}", exc_info=True)
+        logger.error("*" * 70)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred during resume analysis. Please try again."
