@@ -8,7 +8,6 @@ from concurrent.futures import ThreadPoolExecutor
 import pdfplumber
 from docx import Document
 
-# Configure logging
 logger = logging.getLogger(__name__)
 
 
@@ -64,13 +63,13 @@ class TextExtractor:
             TextExtractionError: If extraction fails
         """
         try:
-            logger.info(f"Starting PDF text extraction: {file_path}")
+            logger.info(f"[UTIL] Starting PDF text extraction: {file_path}")
 
             extracted_text = []
 
             with pdfplumber.open(file_path) as pdf:
                 total_pages = len(pdf.pages)
-                logger.info(f"PDF has {total_pages} pages")
+                logger.info(f"[UTIL] PDF has {total_pages} pages")
 
                 for page_num, page in enumerate(pdf.pages, 1):
                     try:
@@ -82,25 +81,26 @@ class TextExtractor:
                             page_text = page_text.strip()
                             if page_text:
                                 extracted_text.append(page_text)
-                                logger.debug(f"Extracted {len(page_text)} characters from page {page_num}")
+                                logger.info(f"[UTIL] Extracted {len(page_text)} characters from page {page_num}/{total_pages}")
 
                     except Exception as e:
-                        logger.warning(f"Failed to extract text from page {page_num}: {str(e)}")
+                        logger.warning(f"[UTIL] Failed to extract text from page {page_num}: {str(e)}")
                         continue
 
             # Join all pages with double newlines
             full_text = "\n\n".join(extracted_text)
 
             if not full_text.strip():
+                logger.error(f"[UTIL] No text content found in PDF: {file_path}")
                 raise TextExtractionError("No text content found in PDF")
 
-            logger.info(f"PDF extraction completed. Total characters: {len(full_text)}")
+            logger.info(f"[UTIL] PDF extraction completed successfully. Total characters: {len(full_text)}")
             return full_text
 
         except Exception as e:
             if isinstance(e, TextExtractionError):
                 raise
-            logger.error(f"PDF extraction failed: {str(e)}")
+            logger.error(f"[UTIL] PDF extraction failed: {str(e)}")
             raise TextExtractionError(f"Failed to extract text from PDF: {str(e)}")
 
     @staticmethod
@@ -118,18 +118,24 @@ class TextExtractor:
             TextExtractionError: If extraction fails
         """
         try:
-            logger.info(f"Starting DOCX text extraction: {file_path}")
+            logger.info(f"[UTIL] Starting DOCX text extraction: {file_path}")
 
             doc = Document(file_path)
             extracted_text = []
 
             # Extract text from all paragraphs
-            for paragraph in doc.paragraphs:
+            paragraph_count = len(doc.paragraphs)
+            logger.info(f"[UTIL] DOCX has {paragraph_count} paragraphs")
+
+            for i, paragraph in enumerate(doc.paragraphs, 1):
                 paragraph_text = paragraph.text.strip()
                 if paragraph_text:
                     extracted_text.append(paragraph_text)
 
             # Extract text from tables
+            table_count = len(doc.tables)
+            logger.info(f"[UTIL] DOCX has {table_count} tables")
+
             for table in doc.tables:
                 for row in table.rows:
                     row_text = []
@@ -144,15 +150,16 @@ class TextExtractor:
             full_text = "\n".join(extracted_text)
 
             if not full_text.strip():
+                logger.error(f"[UTIL] No text content found in DOCX: {file_path}")
                 raise TextExtractionError("No text content found in DOCX")
 
-            logger.info(f"DOCX extraction completed. Total characters: {len(full_text)}")
+            logger.info(f"[UTIL] DOCX extraction completed successfully. Total characters: {len(full_text)}")
             return full_text
 
         except Exception as e:
             if isinstance(e, TextExtractionError):
                 raise
-            logger.error(f"DOCX extraction failed: {str(e)}")
+            logger.error(f"[UTIL] DOCX extraction failed: {str(e)}")
             raise TextExtractionError(f"Failed to extract text from DOCX: {str(e)}")
 
     @classmethod
@@ -194,12 +201,13 @@ class TextExtractor:
         file_info = cls.get_file_info(file_path)
         file_type = file_info["file_type"]
 
-        logger.info(f"Starting text extraction for {file_type.upper()} file: {file_path}")
-        logger.info(f"File size: {file_info['file_size']} bytes")
+        logger.info(f"[UTIL] Starting text extraction for {file_type.upper()} file: {file_path}")
+        logger.info(f"[UTIL] File size: {file_info['file_size']} bytes")
 
         try:
             # Run extraction in thread pool to avoid blocking event loop
             loop = asyncio.get_event_loop()
+            logger.info(f"[UTIL] Running extraction in thread pool...")
             extracted_text = await loop.run_in_executor(
                 cls._executor,
                 cls._extract_text_sync,
@@ -212,14 +220,14 @@ class TextExtractor:
             file_info["processing_time_seconds"] = round(processing_time, 3)
             file_info["text_length"] = len(extracted_text)
 
-            logger.info(f"Text extraction completed in {processing_time:.3f} seconds")
-            logger.info(f"Extracted {len(extracted_text)} characters")
+            logger.info(f"[UTIL] Text extraction completed in {processing_time:.3f} seconds")
+            logger.info(f"[UTIL] Extracted {len(extracted_text)} characters")
 
             return extracted_text, file_info
 
         except Exception as e:
             processing_time = time.time() - start_time
-            logger.error(f"Text extraction failed after {processing_time:.3f} seconds: {str(e)}")
+            logger.error(f"[UTIL] Text extraction failed after {processing_time:.3f} seconds: {str(e)}")
             raise
 
     @staticmethod

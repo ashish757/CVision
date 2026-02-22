@@ -5,8 +5,7 @@ from typing import Dict, Any
 from app.models.text_extraction import TextExtractionResponse
 from app.utils.text_extractor import TextExtractor, TextExtractionError
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,16 +29,20 @@ class TextExtractionService:
         start_time = time.time()
 
         try:
-            logger.info(f"Starting text extraction for file: {file_path}")
+            logger.info("=" * 50)
+            logger.info(f"[TEXT EXTRACTION] Starting text extraction for file: {file_path}")
 
             # Extract text using the utility
             extracted_text, file_info = await TextExtractor.extract_text(file_path)
+            logger.info(f"[TEXT EXTRACTION] Raw text extracted: {len(extracted_text)} characters")
 
             # Clean the extracted text
             cleaned_text = TextExtractor.clean_extracted_text(extracted_text)
+            logger.info(f"[TEXT EXTRACTION] Text cleaned: {len(cleaned_text)} characters")
 
             # Validate text quality
             if not TextExtractor.validate_extracted_text(cleaned_text):
+                logger.error(f"[TEXT EXTRACTION] Text quality validation failed for: {file_path}")
                 raise TextExtractionError("Extracted text quality is insufficient")
 
             # Calculate final processing time
@@ -54,16 +57,20 @@ class TextExtractionService:
                 processing_time_seconds=round(processing_time, 3)
             )
 
-            logger.info(f"Text extraction completed successfully for {file_info['file_name']}")
-            logger.info(f"Extracted {len(cleaned_text)} characters in {processing_time:.3f} seconds")
+            logger.info(f"[TEXT EXTRACTION] SUCCESS - Text extraction completed for {file_info['file_name']}")
+            logger.info(f"[TEXT EXTRACTION] SUCCESS - Extracted {len(cleaned_text)} characters in {processing_time:.3f} seconds")
+            logger.info("=" * 50)
 
             return response
 
-        except TextExtractionError:
+        except TextExtractionError as e:
+            logger.error(f"[TEXT EXTRACTION] ERROR - Extraction failed: {str(e)}")
+            logger.error("=" * 50)
             # Re-raise text extraction errors
             raise
         except Exception as e:
-            logger.error(f"Unexpected error during text extraction: {str(e)}")
+            logger.error(f"[TEXT EXTRACTION] UNEXPECTED ERROR - {str(e)}")
+            logger.error("=" * 50)
             raise TextExtractionError(f"Text extraction failed: {str(e)}")
 
     @staticmethod
