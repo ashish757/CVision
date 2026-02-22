@@ -31,6 +31,7 @@ model Resume {
   status          String    @default("UPLOADED")
   score           Int?
   extractedSkills String[]  @default([])
+  education       String? // Education level from AI analysis
   ranking         String? // JSON string for ranking data
   errorMessage    String?
   uploadedAt      DateTime  @default(now())
