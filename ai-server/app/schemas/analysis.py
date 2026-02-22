@@ -1,6 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field, field_validator
 import os
+from app.core.constants import AnalysisConstants
 
 
 class AnalyzeRequest(BaseModel):
@@ -17,12 +18,12 @@ class AnalyzeRequest(BaseModel):
         if not os.path.exists(v):
             raise ValueError(f"File does not exist: {v}")
 
-        # Validate file extension
-        allowed_extensions = ['.pdf', '.docx']
+        # Validate file extension using core constants
+        from app.core.constants import TextExtractionConstants
         file_extension = os.path.splitext(v)[1].lower()
 
-        if file_extension not in allowed_extensions:
-            raise ValueError(f"Unsupported file type. Allowed types: {', '.join(allowed_extensions)}")
+        if file_extension not in TextExtractionConstants.SUPPORTED_EXTENSIONS:
+            raise ValueError(f"Unsupported file type. Allowed types: {', '.join(TextExtractionConstants.SUPPORTED_EXTENSIONS)}")
 
         return v
 
@@ -32,7 +33,7 @@ class AnalyzeResponse(BaseModel):
     skills: List[str] = Field(..., description="List of extracted skills")
     experience_years: int = Field(..., description="Years of experience")
     education: str = Field(..., description="Highest education level")
-    score: int = Field(..., ge=0, le=100, description="Resume score out of 100")
+    score: int = Field(..., ge=AnalysisConstants.MIN_SCORE, le=AnalysisConstants.MAX_SCORE, description="Resume score out of 100")
     processing_time_seconds: float = Field(..., description="Time taken for processing")
 
     class Config:

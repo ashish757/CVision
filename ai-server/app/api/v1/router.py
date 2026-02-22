@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from app.api.v1.analysis import router as analysis_router
-from app.api.v1.text_extraction import router as text_extraction_router
+from app.api.v1.endpoints.analysis import router as analysis_router
+from app.api.v1.endpoints.text_extraction import router as text_extraction_router
 
 api_router = APIRouter()
 

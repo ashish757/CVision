@@ -1,17 +1,17 @@
 from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import JSONResponse
-import logging
 import os
-from app.models.text_extraction import (
+
+from app.schemas.text_extraction import (
     TextExtractionRequest,
     TextExtractionResponse,
     TextExtractionError as TextExtractionErrorModel
 )
-from app.services.text_extraction_service import TextExtractionService
+from app.services.text_extraction import TextExtractionService
 from app.utils.text_extractor import TextExtractionError
+from app.core import get_logger, LoggingConstants, HTTPConstants
 
-logger = logging.getLogger(__name__)
-
+# Get logger for this module
+logger = get_logger(__name__)
 router = APIRouter(prefix="/extract", tags=["Text Extraction"])
 
 
@@ -72,15 +72,15 @@ async def extract_text(request: TextExtractionRequest):
     """
     try:
         logger.info("*" * 60)
-        logger.info(f"[ROUTER] Received text extraction request for: {request.file_path}")
+        logger.info(f"{LoggingConstants.ROUTER_PREFIX} Received text extraction request for: {request.file_path}")
 
         # Validate file exists (additional check beyond Pydantic validation)
         if not os.path.exists(request.file_path):
-            logger.error(f"[ROUTER] File not found: {request.file_path}")
+            logger.error(f"{LoggingConstants.ROUTER_PREFIX} File not found: {request.file_path}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
-                    "error": "FileNotFound",
+                    "error": HTTPConstants.FILE_NOT_FOUND,
                     "detail": f"File not found: {request.file_path}",
                     "file_path": request.file_path
                 }
@@ -88,26 +88,26 @@ async def extract_text(request: TextExtractionRequest):
 
         # Get file size for logging
         file_size = os.path.getsize(request.file_path)
-        logger.info(f"[ROUTER] Processing file: {os.path.basename(request.file_path)} ({file_size} bytes)")
+        logger.info(f"{LoggingConstants.ROUTER_PREFIX} Processing file: {os.path.basename(request.file_path)} ({file_size} bytes)")
 
         # Extract text using the service
         result = await TextExtractionService.extract_text_from_resume(request.file_path)
 
-        logger.info(f"[ROUTER] SUCCESS - Text extraction successful for: {result.file_name}")
-        logger.info(f"[ROUTER] SUCCESS - Extracted {result.text_length} characters in {result.processing_time_seconds}s")
+        logger.info(f"{LoggingConstants.ROUTER_PREFIX} {LoggingConstants.SUCCESS_INDICATOR} Text extraction successful for: {result.file_name}")
+        logger.info(f"{LoggingConstants.ROUTER_PREFIX} {LoggingConstants.SUCCESS_INDICATOR} Extracted {result.text_length} characters in {result.processing_time_seconds}s")
         logger.info("*" * 60)
 
         return result
 
     except HTTPException as e:
-        logger.error(f"[ROUTER] HTTP Exception: {e.detail}")
+        logger.error(f"{LoggingConstants.ROUTER_PREFIX} HTTP Exception: {e.detail}")
         logger.error("*" * 60)
         # Re-raise HTTP exceptions
         raise
 
     except ValueError as e:
         # Handle validation errors from Pydantic
-        logger.error(f"[ROUTER] Validation error: {str(e)}")
+        logger.error(f"{LoggingConstants.ROUTER_PREFIX} Validation error: {str(e)}")
         logger.error("*" * 60)
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -120,7 +120,7 @@ async def extract_text(request: TextExtractionRequest):
 
     except TextExtractionError as e:
         # Handle text extraction specific errors
-        logger.error(f"[ROUTER] Text extraction error: {str(e)}")
+        logger.error(f"{LoggingConstants.ROUTER_PREFIX} Text extraction error: {str(e)}")
         logger.error("*" * 60)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -133,13 +133,13 @@ async def extract_text(request: TextExtractionRequest):
 
     except Exception as e:
         # Handle unexpected errors
-        logger.error(f"[ROUTER] Unexpected error during text extraction: {str(e)}", exc_info=True)
+        logger.error(f"{LoggingConstants.ROUTER_PREFIX} {LoggingConstants.ERROR_INDICATOR} Unexpected error during text extraction: {str(e)}", exc_info=True)
         logger.error("*" * 60)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "error": "InternalServerError",
-                "detail": "An error occurred during text extraction. Please try again.",
+                "detail": HTTPConstants.INTERNAL_ERROR,
                 "file_path": request.file_path
             }
         )

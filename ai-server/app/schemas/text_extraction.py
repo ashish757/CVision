@@ -1,6 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 import os
+from app.core.constants import TextExtractionConstants
 
 
 class TextExtractionRequest(BaseModel):
@@ -17,12 +18,11 @@ class TextExtractionRequest(BaseModel):
         if not os.path.exists(v):
             raise ValueError(f"File does not exist: {v}")
 
-        # Validate file extension
-        allowed_extensions = ['.pdf', '.docx']
+        # Validate file extension using core constants
         file_extension = os.path.splitext(v)[1].lower()
 
-        if file_extension not in allowed_extensions:
-            raise ValueError(f"Unsupported file type. Allowed types: {', '.join(allowed_extensions)}")
+        if file_extension not in TextExtractionConstants.SUPPORTED_EXTENSIONS:
+            raise ValueError(f"Unsupported file type. Allowed types: {', '.join(TextExtractionConstants.SUPPORTED_EXTENSIONS)}")
 
         return v
 
