@@ -14,7 +14,6 @@ class Settings:
     APP_VERSION: str = "1.0.0"
 
     # API configuration
-    API_V1_STR: str = "/api/v1"
     DOCS_URL: str = "/docs"
     REDOC_URL: str = "/redoc"
 

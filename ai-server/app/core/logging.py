@@ -30,10 +30,10 @@ def setup_logging(log_level: str = "INFO") -> None:
     # Set specific loggers to the desired level to ensure they show
     modules_to_log = [
         "app.services.text_extraction",
-        "app.api.v1.endpoints.text_extraction",
+        "app.routers.text_extraction",
         "app.utils.text_extractor",
         "app.services.analysis",
-        "app.api.v1.endpoints.analysis"
+        "app.routers.analysis"
     ]
 
     for module in modules_to_log:

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1.router import api_router
+from app.routers import analysis_router, text_extraction_router
 from app.core import setup_logging, get_logger, log_startup_info, settings
 
 # Configure logging early
@@ -31,8 +31,9 @@ app.add_middleware(
     allow_headers=settings.ALLOWED_HEADERS,
 )
 
-# Include API routes
-app.include_router(api_router, prefix=settings.API_V1_STR)
+# Include routers
+app.include_router(analysis_router)
+app.include_router(text_extraction_router)
 
 @app.get("/")
 async def root():
@@ -41,7 +42,7 @@ async def root():
         "message": f"{settings.APP_NAME} is Online",
         "version": settings.APP_VERSION,
         "docs": settings.DOCS_URL,
-        "health": f"{settings.API_V1_STR}/analyze/health"
+        "health": "/analyze/health"
     }
 
 @app.get("/health")
