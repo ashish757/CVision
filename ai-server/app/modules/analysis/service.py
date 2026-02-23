@@ -5,8 +5,8 @@ import os
 import logging
 import re
 from typing import List
-from app.schemas.analysis import AnalyzeResponse
-from app.services.text_extraction import TextExtractionService
+from .schemas import AnalyzeResponse
+from ..text_extraction.service import TextExtractionService
 from app.utils.text_extractor import TextExtractionError
 from app.core import AnalysisConstants
 from app.core import LoggingConstants

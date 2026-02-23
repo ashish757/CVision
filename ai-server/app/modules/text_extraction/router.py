@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException, status
 import os
 
-from app.schemas.text_extraction import (
+from .schemas import (
     TextExtractionRequest,
     TextExtractionResponse,
     TextExtractionError as TextExtractionErrorModel
 )
-from app.services.text_extraction import TextExtractionService
+from .service import TextExtractionService
 from app.utils.text_extractor import TextExtractionError
 from app.core import get_logger, LoggingConstants, HTTPConstants
 

@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import analysis_router, text_extraction_router
+from app.modules.analysis.router import router as analysis_router
+from app.modules.text_extraction.router import router as text_extraction_router
+
 from app.core import setup_logging, get_logger, log_startup_info, settings
 
 # Configure logging early

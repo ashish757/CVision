@@ -2,7 +2,7 @@ import asyncio
 import time
 from typing import Dict, Any
 
-from app.schemas.text_extraction import TextExtractionResponse
+from .schemas import TextExtractionResponse
 from app.utils.text_extractor import TextExtractor, TextExtractionError
 from app.core import get_logger, LoggingConstants
 

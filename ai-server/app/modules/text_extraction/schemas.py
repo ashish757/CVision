@@ -61,3 +61,7 @@ class TextExtractionError(BaseModel):
                 "file_path": "uploads/resume_123.pdf"
             }
         }
+
+
+# Re-export for backward compatibility
+ErrorResponse = TextExtractionError

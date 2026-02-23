@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
 import os
 
-from app.schemas.analysis import AnalyzeRequest, AnalyzeResponse, ErrorResponse
-from app.services.analysis import AnalysisService
+from .schemas import AnalyzeRequest, AnalyzeResponse, ErrorResponse
+from .service import AnalysisService
 from app.core import get_logger, LoggingConstants, HTTPConstants
 
 # Get logger for this module
