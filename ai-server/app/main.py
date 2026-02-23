@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.modules.analysis.router import router as analysis_router
+from app.modules.parsing.router import router as parsing_router
 from app.modules.text_extraction.router import router as text_extraction_router
 
 from app.core import setup_logging, get_logger, log_startup_info, settings
@@ -36,6 +37,7 @@ app.add_middleware(
 # Include routers
 app.include_router(analysis_router)
 app.include_router(text_extraction_router)
+app.include_router(parsing_router)
 
 @app.get("/")
 async def root():
