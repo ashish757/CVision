@@ -64,7 +64,7 @@ export class AiService {
       this.logger.log(`Sending request to AI service: ${JSON.stringify(request)}`);
 
       const response: any = await this.httpClient.post(
-        '/api/v1/analyze',
+        '/analyze',
         request,
       );
 
@@ -108,7 +108,7 @@ export class AiService {
   async checkHealth(): Promise<AIHealthResponse> {
     try {
       const response: any = await this.httpClient.get(
-        '/api/v1/analyze/health',
+        '/analyze/health',
       );
 
       this.logger.log('AI service health check passed');

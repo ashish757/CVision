@@ -8,6 +8,8 @@ from typing import List
 from app.schemas.analysis import AnalyzeResponse
 from app.services.text_extraction import TextExtractionService
 from app.utils.text_extractor import TextExtractionError
+from app.core import AnalysisConstants
+from app.core import LoggingConstants
 
 # Get logger for this module
 logger = logging.getLogger(__name__)
@@ -34,19 +36,19 @@ class AnalysisService:
         file_size = os.path.getsize(file_path) if os.path.exists(file_path) else 0
 
         logger.info("=" * 60)
-        logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} Starting comprehensive resume analysis for: {file_name}")
-        logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} File size: {file_size} bytes")
+        logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} Starting comprehensive resume analysis for: {file_name}")
+        logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} File size: {file_size} bytes")
 
         try:
             # Step 1: Extract text from the resume
-            logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} Step 1: Extracting text from resume...")
+            logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} Step 1: Extracting text from resume...")
             extraction_result = await TextExtractionService.extract_text_from_resume(file_path)
 
             extracted_text = extraction_result.extracted_text
-            logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} Text extraction completed - {len(extracted_text)} characters extracted")
+            logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} Text extraction completed - {len(extracted_text)} characters extracted")
 
             # Step 2: Simulate AI processing delay
-            logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} Step 2: Processing extracted text with AI analysis...")
+            logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} Step 2: Processing extracted text with AI analysis...")
             processing_delay = random.uniform(1.5, 2.5)
             await asyncio.sleep(processing_delay)
 
@@ -57,16 +59,16 @@ class AnalysisService:
             processing_time = time.time() - start_time
             analysis_data.processing_time_seconds = round(processing_time, 2)
 
-            logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} ✅ Analysis completed successfully for {file_name}")
-            logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} Total processing time: {processing_time:.2f} seconds")
-            logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} Generated score: {analysis_data.score}")
-            logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} Found {len(analysis_data.skills)} skills")
+            logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} ✅ Analysis completed successfully for {file_name}")
+            logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} Total processing time: {processing_time:.2f} seconds")
+            logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} Generated score: {analysis_data.score}")
+            logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} Found {len(analysis_data.skills)} skills")
             logger.info("=" * 60)
 
             return analysis_data
 
         except TextExtractionError as e:
-            logger.error(f"{AnalysisConstants.ANALYSIS_PREFIX} ❌ Text extraction failed for {file_name}: {str(e)}")
+            logger.error(f"{LoggingConstants.ANALYSIS_PREFIX} ❌ Text extraction failed for {file_name}: {str(e)}")
             logger.error("=" * 60)
             # Fall back to mock data if text extraction fails
             mock_data = AnalysisService._generate_mock_analysis()
@@ -75,7 +77,7 @@ class AnalysisService:
             return mock_data
 
         except Exception as e:
-            logger.error(f"{AnalysisConstants.ANALYSIS_PREFIX} ❌ Unexpected error during analysis of {file_name}: {str(e)}")
+            logger.error(f"{LoggingConstants.ANALYSIS_PREFIX} ❌ Unexpected error during analysis of {file_name}: {str(e)}")
             logger.error("=" * 60)
             raise
 
@@ -124,11 +126,11 @@ class AnalysisService:
         # Calculate score based on content analysis
         score = AnalysisService._calculate_content_score(text, found_skills, experience_years)
 
-        logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} Text-based analysis results:")
-        logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} - Skills found: {len(found_skills)} ({', '.join(found_skills[:5])}{'...' if len(found_skills) > 5 else ''})")
-        logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} - Experience: {experience_years} years")
-        logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} - Education: {education}")
-        logger.info(f"{AnalysisConstants.ANALYSIS_PREFIX} - Score: {score}/100")
+        logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} Text-based analysis results:")
+        logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} - Skills found: {len(found_skills)} ({', '.join(found_skills[:5])}{'...' if len(found_skills) > 5 else ''})")
+        logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} - Experience: {experience_years} years")
+        logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} - Education: {education}")
+        logger.info(f"{LoggingConstants.ANALYSIS_PREFIX} - Score: {score}/100")
 
         return AnalyzeResponse(
             skills=found_skills,
