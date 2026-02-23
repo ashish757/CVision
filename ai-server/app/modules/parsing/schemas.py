@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, Field
 
 
@@ -54,5 +54,70 @@ class ResumeParsingError(BaseModel):
                 "error": "ParsingError",
                 "detail": "Failed to parse resume text: empty input",
                 "text_preview": "John Doe\\n\\nPROFILE\\nExperienced..."
+            }
+        }
+
+
+class EntityExtractionRequest(BaseModel):
+    """Request model for entity extraction from resume sections"""
+    sections: dict = Field(..., description="Dictionary of resume sections from parsing module")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "sections": {
+                    "summary": "Experienced software engineer with 5+ years...",
+                    "skills": "Python, Java, React, Node.js, AWS...",
+                    "experience": "Software Engineer at ABC Corp (2020-2023)...",
+                    "education": "Bachelor of Science in Computer Science...",
+                    "projects": "E-commerce Platform - Built using React...",
+                    "certifications": "AWS Certified Developer..."
+                }
+            }
+        }
+
+
+class EntityExtractionResponse(BaseModel):
+    """Response model for entity extraction"""
+    name: str = Field(default="", description="Extracted person name")
+    email: str = Field(default="", description="Extracted email address")
+    phone: str = Field(default="", description="Extracted phone number")
+    skills: List[str] = Field(default_factory=list, description="List of extracted technical skills")
+    companies: List[str] = Field(default_factory=list, description="List of extracted company names")
+    job_titles: List[str] = Field(default_factory=list, description="List of extracted job titles")
+    education_degrees: List[str] = Field(default_factory=list, description="List of extracted education degrees")
+    dates: List[str] = Field(default_factory=list, description="List of extracted dates")
+    total_entities_extracted: int = Field(..., description="Total number of entities extracted")
+    processing_time_seconds: float = Field(..., description="Time taken for entity extraction")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "John Doe",
+                "email": "john.doe@email.com",
+                "phone": "(555) 123-4567",
+                "skills": ["Python", "Java", "React", "Node.js", "AWS"],
+                "companies": ["ABC Corp", "XYZ Inc"],
+                "job_titles": ["Software Engineer", "Senior Developer"],
+                "education_degrees": ["Bachelor of Science", "Computer Science"],
+                "dates": ["2020-2023", "2018-2020", "2018"],
+                "total_entities_extracted": 15,
+                "processing_time_seconds": 0.25
+            }
+        }
+
+
+class EntityExtractionError(BaseModel):
+    """Error response model for entity extraction"""
+    error: str = Field(..., description="Error type")
+    detail: str = Field(..., description="Detailed error message")
+    sections_preview: Optional[dict] = Field(None, description="Preview of input sections for debugging")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "error": "ExtractionError",
+                "detail": "Failed to extract entities: spaCy model not available",
+                "sections_preview": {"summary": "John Doe\n...", "skills": "Python, Java..."}
             }
         }
