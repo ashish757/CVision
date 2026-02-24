@@ -6,6 +6,7 @@ from app.modules.parsing.router import router as parsing_router
 from app.modules.text_extraction.router import router as text_extraction_router
 from app.modules.skill_analysis.router import router as skill_analysis_router
 from app.modules.experience_analysis.router import router as experience_analysis_router
+from app.modules.scoring.router import router as scoring_router
 
 from app.core import setup_logging, get_logger, log_startup_info, settings
 
@@ -42,6 +43,7 @@ app.include_router(text_extraction_router)
 app.include_router(parsing_router)
 app.include_router(skill_analysis_router)
 app.include_router(experience_analysis_router)
+app.include_router(scoring_router)
 
 @app.get("/")
 async def root():
