@@ -11,6 +11,7 @@ from .parsing.router import router as parsing_router
 from .skill_analysis.router import router as skill_analysis_router
 from .experience_analysis.router import router as experience_analysis_router
 from .scoring.router import router as scoring_router
+from .report_generation.router import router as report_generation_router
 
 __all__ = [
     "analysis_router",
@@ -18,5 +19,6 @@ __all__ = [
     "parsing_router",
     "skill_analysis_router",
     "experience_analysis_router",
-    "scoring_router"
+    "scoring_router",
+    "report_generation_router"
 ]
